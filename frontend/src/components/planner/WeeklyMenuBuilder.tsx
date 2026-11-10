@@ -407,9 +407,9 @@ export function WeeklyMenuBuilder() {
             <span className="inline-block px-3 py-1 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-xs font-semibold text-[#3f6212]">
               Custom 7-Day Menu Builder
             </span>
-            <h1 className="text-[44px] sm:text-[56px] font-medium tracking-[-0.03em] leading-[1.04] text-[#000000]">
+            <h2 className="text-3xl sm:text-5xl font-medium tracking-[-0.03em] leading-[1.06] text-[#000000]">
               Plan a week of regional Indian meals in one tap.
-            </h1>
+            </h2>
             <p className="text-[16px] text-[#333333] leading-[1.6]">
               Pick the regions you love, set your daily nutrition target and
               weekly grocery budget, and MiseFood builds breakfast, lunch and

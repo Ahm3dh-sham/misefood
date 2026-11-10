@@ -412,31 +412,19 @@ export function EloqwntLandingShell({
 
       <main>
         {/* =====================================================================
-            FIRST SECTION: CUSTOM 7-DAY REGIONAL MENU BUILDER
-            Interactive North, South, East, West & Northeast Indian planner first.
+            FIRST SECTION: HERO — Stage layout on the alternate ground (#e9eade).
+            Large display heading (70px desktop / 53px mobile), two actions,
+            working Kitchen Studio, and key numbers.
            ===================================================================== */}
-        <section
-          id="menu-builder"
-          className="bg-[#f1f3e6] pt-10 pb-[64px] lg:pt-14 lg:pb-[85px] px-6 scroll-mt-24"
-        >
-          <div className="max-w-[1200px] mx-auto">
-            <WeeklyMenuBuilder />
-          </div>
-        </section>
-
-        {/* =====================================================================
-            SECTION 3: HERO — Stage layout on the alternate ground (#e9eade).
-            Large display heading, two actions, working Kitchen Studio, key numbers.
-           ===================================================================== */}
-        <section className="bg-[#e9eade] pt-[85px] pb-[64px] lg:pt-[110px] lg:pb-[85px] px-6">
+        <section className="bg-[#e9eade] pt-[85px] pb-[64px] lg:pt-[128px] lg:pb-[85px] px-6">
           <div className="max-w-[1200px] mx-auto">
             {/* Centered Stage Heading & Actions */}
             <div className="text-center max-w-[980px] mx-auto">
-              <h2 className="text-[46px] lg:text-[64px] font-medium leading-[1.04] tracking-[-0.03em] text-[#000000]">
+              <h1 className="text-[53px] lg:text-[70px] font-medium leading-[1.04] tracking-[-0.03em] text-[#000000]">
                 From saved recipe links to
                 <br className="hidden sm:inline" /> four dishes finishing hot
                 <br className="hidden sm:inline" /> at the exact same minute.
-              </h2>
+              </h1>
 
               <p className="mt-6 text-[16px] text-[#333333] max-w-[660px] mx-auto leading-[1.6]">
                 <strong>MiseFood</strong> strips clutter from blogs, Reels, and
@@ -557,13 +545,13 @@ export function EloqwntLandingShell({
 
                 <div className="text-center lg:border-r lg:border-[#d3d4c8] lg:pr-6">
                   <p className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#000000] tabular-nums">
-                    4-Part
+                    5 Regions
                   </p>
                   <p className="text-sm font-semibold text-[#000000] mt-1">
-                    Balanced Thali &amp; Macro Solver
+                    Custom 7-Day Regional Menu
                   </p>
                   <p className="text-xs text-[#4d4c4c] mt-0.5">
-                    Rice + Dal + Sabji + Curd under ₹2,500/week
+                    North, South, East, West &amp; Northeast Indian
                   </p>
                 </div>
 
@@ -580,6 +568,19 @@ export function EloqwntLandingShell({
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* =====================================================================
+            SECOND SECTION: CUSTOM 7-DAY REGIONAL MEAL PLANNER
+            Immediately follows the opening hero stage on #f1f3e6 ground.
+           ===================================================================== */}
+        <section
+          id="menu-builder"
+          className="bg-[#f1f3e6] pt-[85px] pb-[64px] lg:pt-[128px] lg:pb-[85px] px-6 scroll-mt-24"
+        >
+          <div className="max-w-[1200px] mx-auto">
+            <WeeklyMenuBuilder />
           </div>
         </section>
 
