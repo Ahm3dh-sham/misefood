@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: misefood-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: misefood
+      POSTGRES_PASSWORD: misefood_password
+      POSTGRES_DB: misefood_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - misefood_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U misefood -d misefood_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: misefood-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://misefood:misefood_password@postgres:5432/misefood_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  misefood_pgdata:
