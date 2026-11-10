@@ -3,12 +3,12 @@
 import React from "react";
 
 export type LogoVariant =
-  | "crown-katori" // 1. The Toque-Dome Katori (Chef cap forms the steaming dome lid of a brass/terracotta bowl)
-  | "steam-negative" // 2. Negative-Space Steam Toque (Rising aroma lines from a crescent bowl sculpt a chef cap)
-  | "monoline-crest" // 3. Michelin Monoline Ribbon (Single continuous gold-copper line tracing bowl + toque)
-  | "m-monogram" // 4. Geometric 'M' Bowl & Toque (Letter M base = deep bowl, top puffs = chef toque)
-  | "seal-emblem" // 5. Warm Terracotta Squircle App Icon (Embossed parchment toque + fluted bowl)
-  | "horizon-duet"; // 6. Horizon Duet (Minimalist floating chef toque reflected as a katori bowl below a saffron horizon)
+  | "crown-katori" // 1. Toque Crown + Harvest Vegetables in Terracotta Katori (White BG)
+  | "steam-negative" // 2. Steam Toque rising from Vegetable Bowl (White BG)
+  | "monoline-crest" // 3. Michelin Monoline Toque + Veggie Bowl (White BG)
+  | "m-monogram" // 4. 'M' Monogram Toque + Vegetable Bowl (White BG)
+  | "seal-emblem" // 5. Fluted Brass Katori + Vegetables + Toque Dome (White BG)
+  | "horizon-duet"; // 6. Minimalist Toque + Veggie Horizon Bowl (White BG)
 
 interface MiseFoodLogoProps {
   variant?: LogoVariant;
@@ -19,36 +19,38 @@ interface MiseFoodLogoProps {
 }
 
 /**
- * Warm & Elegant Palette:
+ * Pure White (#FFFFFF) background with Warm & Elegant Palette + Fresh Vegetables in the Bowl:
+ * - Pure White Canvas: #FFFFFF
  * - Warm Espresso Ink: #1E1916
- * - Roasted Terracotta: #C85A32
- * - Saffron Amber Gold: #E09F3E
- * - Creamy Alabaster: #FAF5EE
- * - Brushed Copper: #A84422
+ * - Roasted Terracotta (Tomato / Clay): #C85A32
+ * - Saffron Amber Gold (Carrot / Bell Pepper / Turmeric): #E09F3E
+ * - Warm Herb Sage (Coriander / Basil Leaf): #5C7A47
  */
 export function MiseFoodLogo({
   variant = "crown-katori",
-  size = 36,
+  size = 38,
   showWordmark = true,
   theme = "light",
   className = "",
 }: MiseFoodLogoProps) {
-  const textColor = theme === "light" ? "text-[#1E1916]" : "text-[#FAF5EE]";
+  const textColor = theme === "light" ? "text-[#1E1916]" : "text-white";
 
   return (
-    <span className={`inline-flex items-center gap-2.5 select-none ${className}`}>
+    <span
+      className={`inline-flex items-center gap-2.5 select-none ${className}`}
+    >
       <MiseFoodGlyph variant={variant} size={size} />
       {showWordmark && (
         <span
           className={`font-switzer font-semibold tracking-[-0.04em] leading-none flex items-baseline gap-1 ${textColor}`}
-          style={{ fontSize: Math.round(size * 0.58) }}
+          style={{ fontSize: Math.round(size * 0.56) }}
         >
           <span>misefood</span>
           <span
             className="inline-block rounded-full bg-[#C85A32]"
             style={{
-              width: Math.max(5, Math.round(size * 0.15)),
-              height: Math.max(5, Math.round(size * 0.15)),
+              width: Math.max(5, Math.round(size * 0.14)),
+              height: Math.max(5, Math.round(size * 0.14)),
             }}
           />
         </span>
@@ -59,14 +61,14 @@ export function MiseFoodLogo({
 
 export function MiseFoodGlyph({
   variant = "crown-katori",
-  size = 36,
+  size = 38,
 }: {
   variant?: LogoVariant;
   size?: number;
 }) {
   switch (variant) {
     case "crown-katori":
-      // 1. The Toque-Dome Katori: Puffy 3-lobed Chef Cap crowning a warm Terracotta & Saffron Katori Bowl
+      // 1. White Badge: 3-Lobed Chef Cap crowning a Bowl brimming with Tomato, Saffron Carrot & Herb Leaves
       return (
         <svg
           width={size}
@@ -74,60 +76,88 @@ export function MiseFoodGlyph({
           viewBox="0 0 64 64"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          aria-label="MiseFood Bowl and Chef Cap Logo"
+          aria-label="MiseFood Bowl with Vegetables and Chef Cap Logo"
         >
-          <defs>
-            <linearGradient id="warmBg1" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#261F1B" />
-              <stop offset="100%" stopColor="#161210" />
-            </linearGradient>
-            <linearGradient id="saffronGrad" x1="16" y1="12" x2="48" y2="34" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#F3C677" />
-              <stop offset="100%" stopColor="#DF9236" />
-            </linearGradient>
-            <linearGradient id="terracottaBowl" x1="14" y1="36" x2="50" y2="54" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#DF6D43" />
-              <stop offset="100%" stopColor="#B8431E" />
-            </linearGradient>
-          </defs>
-          {/* Squircle Medallion Base */}
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#warmBg1)" />
+          {/* Crisp Pure White Squircle Background */}
           <rect
-            x="2.75"
-            y="2.75"
-            width="58.5"
-            height="58.5"
-            rx="17.25"
-            stroke="#E09F3E"
-            strokeOpacity="0.28"
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
             strokeWidth="1.5"
           />
 
-          {/* Top Component: 3-Lobed Chef Cap (Toque Blanche) */}
+          {/* Top Component: Warm Saffron & Espresso 3-Lobed Chef Cap (Toque Blanche) */}
           <path
-            d="M21 31V27.5C17.2 27.1 14.5 24.1 14.5 20.4C14.5 16.5 17.7 13.4 21.6 13.4C22.7 13.4 23.8 13.7 24.7 14.2C26.2 11.4 28.9 9.5 32 9.5C35.1 9.5 37.8 11.4 39.3 14.2C40.2 13.7 41.3 13.4 42.4 13.4C46.3 13.4 49.5 16.5 49.5 20.4C49.5 24.1 46.8 27.1 43 27.5V31H21Z"
-            fill="url(#saffronGrad)"
+            d="M20.5 27.5V24.5C17 24 14.5 21.2 14.5 17.7C14.5 14 17.5 11 21.3 11C22.4 11 23.5 11.3 24.4 11.8C25.8 9.1 28.6 7.4 32 7.4C35.4 7.4 38.2 9.1 39.6 11.8C40.5 11.3 41.6 11 42.7 11C46.5 11 49.5 14 49.5 17.7C49.5 21.2 47 24 43.5 24.5V27.5H20.5Z"
+            fill="#E09F3E"
+            stroke="#1E1916"
+            strokeWidth="2"
+            strokeLinejoin="round"
           />
-          {/* Subtle vertical toque pleats */}
+          {/* Toque Pleats & Band */}
           <path
-            d="M28 19V28.5M32 17V28.5M36 19V28.5"
+            d="M27.5 16.5V25M32 14.5V25M36.5 16.5V25"
+            stroke="#1E1916"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
+
+          {/* Middle Layer: Fresh Vegetables nestled inside the Bowl Rim */}
+          {/* Left: Warm Herb Leaf Sprig (Coriander / Basil) */}
+          <path
+            d="M15.5 37.5C14.5 32.5 18 29 23 30.5C24.5 33.5 22 37.5 15.5 37.5Z"
+            fill="#5C7A47"
             stroke="#1E1916"
             strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          {/* Center: Roasted Heirloom Tomato Half with seed details */}
+          <path
+            d="M23.5 37.5C23.5 31.8 27.3 28.5 32 28.5C36.7 28.5 40.5 31.8 40.5 37.5H23.5Z"
+            fill="#C85A32"
+            stroke="#1E1916"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M29.5 33.5L30.8 35M34.5 33.5L33.2 35"
+            stroke="#FAF5EE"
+            strokeWidth="1.5"
             strokeLinecap="round"
-            strokeOpacity="0.55"
+          />
+          {/* Right: Saffron Carrot / Bell Pepper Slice & Right Herb Leaf */}
+          <path
+            d="M38.5 37.5C39 32.5 43.5 29.5 48 31.5C49 34.5 46.5 37.5 38.5 37.5Z"
+            fill="#E09F3E"
+            stroke="#1E1916"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M44.5 36.5C46.5 32 50 31.5 51 35.5"
+            stroke="#5C7A47"
+            strokeWidth="2.4"
+            strokeLinecap="round"
           />
 
-          {/* Golden Horizon Rim separating Toque & Bowl */}
-          <rect x="13" y="33.5" width="38" height="2.6" rx="1.3" fill="#FAF3E8" />
-
-          {/* Bottom Component: Deep Indian Katori / Culinary Bowl */}
+          {/* Bottom Component: Deep Espresso & Terracotta Culinary Bowl (Katori) */}
           <path
-            d="M15 38.5H49C49 46.8 41.8 53 32 53C22.2 53 15 46.8 15 38.5Z"
-            fill="url(#terracottaBowl)"
+            d="M12.5 37.5H51.5C50.6 48.2 42.5 55 32 55C21.5 55 13.4 48.2 12.5 37.5Z"
+            fill="#1E1916"
           />
-          {/* Bowl Foot Ring */}
+          {/* Warm Terracotta Gloss Curve & Foot on the Bowl */}
           <path
-            d="M25 54.8H39"
+            d="M18.5 42.5C21.8 47.2 26.5 49.8 32 49.8C37.5 49.8 42.2 47.2 45.5 42.5"
+            stroke="#C85A32"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M25 57H39"
             stroke="#E09F3E"
             strokeWidth="2.2"
             strokeLinecap="round"
@@ -136,7 +166,7 @@ export function MiseFoodGlyph({
       );
 
     case "steam-negative":
-      // 2. Negative-Space Steam Toque: Crescent terracotta bowl with saffron steam forming a chef cap
+      // 2. White Badge: Negative-Space Steam Toque rising from a Vegetable-Filled Bowl
       return (
         <svg
           width={size}
@@ -145,29 +175,41 @@ export function MiseFoodGlyph({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="#F7F1E5" stroke="#E4D7C5" strokeWidth="1.5" />
+          <rect
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
+            strokeWidth="1.5"
+          />
           {/* Chef Cap Outline sculpted by rising steam */}
           <path
-            d="M22 33V28C18.2 27.5 15.5 24.4 15.5 20.6C15.5 16.6 18.8 13.5 22.8 13.5C24 13.5 25.1 13.8 26.1 14.4C27.5 11.7 30.1 10 32.8 10C35.8 10 38.5 11.9 39.8 14.6C40.7 13.9 41.9 13.5 43.2 13.5C47 13.5 50 16.6 50 20.4C50 24.2 47.2 27.4 43.5 27.9V33"
+            d="M21.5 28V24C17.8 23.5 15.2 20.6 15.2 17C15.2 13.2 18.4 10.2 22.3 10.2C23.5 10.2 24.6 10.5 25.6 11.1C27 8.5 29.5 7 32.2 7C35.2 7 37.8 8.8 39.1 11.4C40 10.7 41.2 10.2 42.5 10.2C46.2 10.2 49.2 13.2 49.2 16.9C49.2 20.6 46.5 23.6 42.8 24.1V28"
             stroke="#C85A32"
-            strokeWidth="3.2"
+            strokeWidth="2.8"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* Three S-curve steam plumes inside the toque */}
           <path
-            d="M27 29C27 25.5 29 24.5 29 21M33 29C33 25 35 24 35 20M39 29C39 25.5 41 24.5 41 21"
+            d="M27.5 25.5C27.5 22.5 29.2 21.5 29.2 18.5M33 25.5C33 22 34.8 21 34.8 17.5M38.5 25.5C38.5 22.5 40.2 21.5 40.2 18.5"
             stroke="#E09F3E"
-            strokeWidth="2.2"
+            strokeWidth="2"
             strokeLinecap="round"
           />
-          {/* Deep Espresso Crescent Bowl */}
+          {/* Vegetables in the Bowl */}
+          <circle cx="24" cy="35" r="5" fill="#5C7A47" />
+          <circle cx="32" cy="34" r="6" fill="#C85A32" />
+          <circle cx="40" cy="35" r="5" fill="#E09F3E" />
+          {/* Bowl */}
           <path
-            d="M13 36.5H51C50.2 46.2 42.3 53 32 53C21.7 53 13.8 46.2 13 36.5Z"
+            d="M12.5 37H51.5C50.6 47.8 42.5 54.5 32 54.5C21.5 54.5 13.4 47.8 12.5 37Z"
             fill="#1E1916"
           />
           <path
-            d="M20 42C23.5 45.2 27.6 46.8 32 46.8C36.4 46.8 40.5 45.2 44 42"
+            d="M20 43C23.5 46.2 27.6 47.8 32 47.8C36.4 47.8 40.5 46.2 44 43"
             stroke="#E09F3E"
             strokeWidth="2"
             strokeLinecap="round"
@@ -176,7 +218,7 @@ export function MiseFoodGlyph({
       );
 
     case "monoline-crest":
-      // 3. Michelin Continuous Monoline Ribbon (Single unbroken gold/copper line)
+      // 3. White Badge: Michelin Continuous Monoline Toque + Harvest Vegetables
       return (
         <svg
           width={size}
@@ -185,24 +227,41 @@ export function MiseFoodGlyph({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="#1A1512" />
+          <rect
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
+            strokeWidth="1.5"
+          />
+          {/* Vegetables peeking from bowl */}
           <path
-            d="M14 36H50C49 46 41.5 52.5 32 52.5C22.5 52.5 15 46 14 36ZM20 32H44V27.5C47.2 26.8 49.5 24 49.5 20.5C49.5 16.6 46.4 13.5 42.5 13.5C41.2 13.5 40 13.9 39 14.5C37.6 11.8 35 10 32 10C29 10 26.4 11.8 25 14.5C24 13.9 22.8 13.5 21.5 13.5C17.6 13.5 14.5 16.6 14.5 20.5C14.5 24 16.8 26.8 20 27.5V32Z"
-            stroke="#E5A94C"
-            strokeWidth="2.6"
+            d="M17 37C17 32.5 21 30 25 32.5C27 29 31.5 28.5 34.5 31.5C38 29 43 30.5 45.5 34.5L47 37H17Z"
+            fill="#E09F3E"
+            fillOpacity="0.28"
+          />
+          <path
+            d="M18 36.5C19.5 32 23.5 31 26.5 34M27 35.5C29 30 35 30 37 35.5M37.5 34.5C40.5 31 44.5 32 46 36.5"
+            stroke="#5C7A47"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+          />
+          {/* Continuous Espresso & Terracotta Monoline Toque + Bowl */}
+          <path
+            d="M13.5 37H50.5C49.5 47 41.8 53.5 32 53.5C22.2 53.5 14.5 47 13.5 37ZM20.5 27.5H43.5V23.8C46.8 23.1 49.2 20.3 49.2 16.9C49.2 13.1 46.1 10 42.3 10C41 10 39.8 10.4 38.8 11C37.4 8.3 34.9 6.6 32 6.6C29.1 6.6 26.6 8.3 25.2 11C24.2 10.4 23 10 21.7 10C17.9 10 14.8 13.1 14.8 16.9C14.8 20.3 17.2 23.1 20.5 23.8V27.5Z"
+            stroke="#C85A32"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-          />
-          {/* Subtle AI 4-point culinary star inside bowl */}
-          <path
-            d="M32 40L33.4 43.1L36.5 44.5L33.4 45.9L32 49L30.6 45.9L27.5 44.5L30.6 43.1L32 40Z"
-            fill="#D46A3E"
           />
         </svg>
       );
 
     case "m-monogram":
-      // 4. Geometric 'M' Bowl & Toque Monogram
+      // 4. White Badge: Geometric 'M' Toque + Vegetable Bowl
       return (
         <svg
           width={size}
@@ -211,21 +270,34 @@ export function MiseFoodGlyph({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="#F6EFE4" stroke="#E2D5C1" strokeWidth="1.5" />
-          {/* Top M-Peaks forming Chef Cap */}
-          <path
-            d="M17 32V21C17 15.5 21.5 11.5 26.5 12.5L32 19L37.5 12.5C42.5 11.5 47 15.5 47 21V32H17Z"
-            fill="#D9822B"
+          <rect
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
+            strokeWidth="1.5"
           />
-          {/* Bottom Bowl cradle forming M base */}
+          {/* Top Chef Toque forming M Crown */}
           <path
-            d="M13 35.5H51C50 45.8 42.2 52.5 32 52.5C21.8 52.5 14 45.8 13 35.5Z"
-            fill="#211C19"
+            d="M18 28V19C18 13.8 22.2 10 27 11L32 17L37 11C41.8 10 46 13.8 46 19V28H18Z"
+            fill="#E09F3E"
+          />
+          {/* Vegetables along the rim */}
+          <circle cx="22" cy="34.5" r="4.5" fill="#5C7A47" />
+          <circle cx="32" cy="33.5" r="5.5" fill="#C85A32" />
+          <circle cx="42" cy="34.5" r="4.5" fill="#5C7A47" />
+          {/* Deep Bowl */}
+          <path
+            d="M12.5 36.5H51.5C50.5 47 42.4 54 32 54C21.6 54 13.5 47 12.5 36.5Z"
+            fill="#1E1916"
           />
           <path
-            d="M23 35.5L32 44.5L41 35.5"
-            stroke="#F6EFE4"
-            strokeWidth="2.8"
+            d="M23 36.5L32 45.5L41 36.5"
+            stroke="#FFFFFF"
+            strokeWidth="2.6"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -233,7 +305,7 @@ export function MiseFoodGlyph({
       );
 
     case "seal-emblem":
-      // 5. Roasted Terracotta App Icon Seal with Cream Embossed Glyph
+      // 5. White Badge: Fluted Terracotta Katori + Harvest Vegetables + Chef Toque
       return (
         <svg
           width={size}
@@ -242,35 +314,45 @@ export function MiseFoodGlyph({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
-            <linearGradient id="sealGrad" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#D16038" />
-              <stop offset="100%" stopColor="#8E3317" />
-            </linearGradient>
-          </defs>
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#sealGrad)" />
-          {/* Cream Toque */}
-          <path
-            d="M21 30.5V27C17.5 26.5 15 23.6 15 20C15 16.1 18.1 13 22 13C23.2 13 24.3 13.3 25.2 13.9C26.7 11.2 29.2 9.5 32 9.5C34.8 9.5 37.3 11.2 38.8 13.9C39.7 13.3 40.8 13 42 13C45.9 13 49 16.1 49 20C49 23.6 46.5 26.5 43 27V30.5H21Z"
-            fill="#FAF5EE"
+          <rect
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
+            strokeWidth="1.5"
           />
-          {/* Cream Fluted Bowl */}
+          {/* Toque */}
           <path
-            d="M14 35.5H50C49.2 45.2 41.8 52 32 52C22.2 52 14.8 45.2 14 35.5Z"
-            fill="#FAF5EE"
+            d="M21 27.5V24C17.5 23.5 15 20.6 15 17C15 13.1 18.1 10 22 10C23.2 10 24.3 10.3 25.2 10.9C26.7 8.2 29.2 6.5 32 6.5C34.8 6.5 37.3 8.2 38.8 10.9C39.7 10.3 40.8 10 42 10C45.9 10 49 13.1 49 17C49 20.6 46.5 23.5 43 24V27.5H21Z"
+            fill="#1E1916"
+          />
+          {/* Vegetables */}
+          <path
+            d="M16 36C16.5 31.5 20.5 29.5 24.5 31.5C26.5 28.5 31 28 34 30.5C37.5 28 42.5 29.5 45.5 33.5L47.5 36H16Z"
+            fill="#5C7A47"
+          />
+          <circle cx="28" cy="34" r="4" fill="#C85A32" />
+          <circle cx="37" cy="34" r="4" fill="#E09F3E" />
+          {/* Fluted Terracotta Katori Bowl */}
+          <path
+            d="M13 36.5H51C50.2 46.8 42.2 54 32 54C21.8 54 13.8 46.8 13 36.5Z"
+            fill="#C85A32"
           />
           <path
-            d="M24 54.5H40"
-            stroke="#F3C677"
-            strokeWidth="2.4"
-            strokeLinecap="round"
+            d="M25 36.5C25 44 28 50 32 53.5M39 36.5C39 44 36 50 32 53.5"
+            stroke="#FFFFFF"
+            strokeWidth="1.8"
+            strokeOpacity="0.65"
           />
         </svg>
       );
 
     case "horizon-duet":
     default:
-      // 6. Minimalist Horizon Symmetry (Toque above, Katori below)
+      // 6. White Badge: Minimalist Toque + Veggie Horizon Bowl
       return (
         <svg
           width={size}
@@ -279,14 +361,27 @@ export function MiseFoodGlyph({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect x="2" y="2" width="60" height="60" rx="18" fill="#231D1A" />
-          <circle cx="32" cy="21" r="9" fill="#E09F3E" />
-          <circle cx="23" cy="23" r="6.5" fill="#E09F3E" />
-          <circle cx="41" cy="23" r="6.5" fill="#E09F3E" />
-          <rect x="12" y="32" width="40" height="2.5" rx="1.25" fill="#FAF5EE" />
+          <rect
+            x="1.5"
+            y="1.5"
+            width="61"
+            height="61"
+            rx="17"
+            fill="#FFFFFF"
+            stroke="#E6DDD0"
+            strokeWidth="1.5"
+          />
+          <circle cx="32" cy="17.5" r="8.5" fill="#E09F3E" />
+          <circle cx="23" cy="19.5" r="6" fill="#E09F3E" />
+          <circle cx="41" cy="19.5" r="6" fill="#E09F3E" />
+          {/* Vegetable Trio Row */}
+          <circle cx="22.5" cy="33.5" r="4.2" fill="#5C7A47" />
+          <circle cx="32" cy="33" r="4.8" fill="#C85A32" />
+          <circle cx="41.5" cy="33.5" r="4.2" fill="#5C7A47" />
+          {/* Espresso Bowl */}
           <path
-            d="M16 37.5H48C47 46 40.5 51.5 32 51.5C23.5 51.5 17 46 16 37.5Z"
-            fill="#C85A32"
+            d="M14 36.5H50C49 46.2 41.8 53 32 53C22.2 53 15 46.2 14 36.5Z"
+            fill="#1E1916"
           />
         </svg>
       );
