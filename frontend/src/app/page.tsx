@@ -88,7 +88,6 @@ export default function MiseFoodWorkspacePage() {
     setCurrentServings(recipe.servings);
   };
 
-  // Bug #3 Fix: Recalculate recipe total cost when an ingredient is swapped
   const handleReplaceIngredient = (
     idx: number,
     replacement: NormalizedIngredient
@@ -186,27 +185,34 @@ export default function MiseFoodWorkspacePage() {
         setActiveTab("hub");
       }}
       activeTimers={timers}
+      onStartQuickTimer={(label, seconds, stepNum) => {
+        startTimer(label, seconds, stepNum);
+      }}
       onApplyConciergePrompt={(promptText) => {
         setPlannerPrompt(promptText);
         setActiveTab("planner");
       }}
     >
       {activeTab === "hub" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Clean Recipe Library & Search */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column: Recipe Library & Search */}
           <div className="lg:col-span-4 space-y-4">
             <form
               onSubmit={(e) => void handleSemanticSearch(e)}
               className="flex items-center gap-2"
             >
+              <label htmlFor="recipe-search" className="sr-only">
+                Search dishes, ingredients, or mood
+              </label>
               <div className="relative flex-1">
-                <Search className="h-4 w-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="h-4 w-4 text-[#4d4c4c] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
+                  id="recipe-search"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search dishes, ingredients, or mood..."
-                  className="w-full rounded-full bg-[#F6F6F4] border border-zinc-200/80 pl-10 pr-4 py-2.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900 focus:bg-white transition-colors"
+                  className="w-full rounded-full bg-[#e9eade] border border-[#d3d4c8] pl-10 pr-4 py-2.5 text-xs text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
                 />
               </div>
               {searchQuery && (
@@ -216,7 +222,7 @@ export default function MiseFoodWorkspacePage() {
                     setSearchQuery("");
                     void reloadRecipes("");
                   }}
-                  className="px-3 py-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 text-xs font-medium"
+                  className="btn-press px-3 py-2 rounded-full bg-[#e9eade] border border-[#d3d4c8] text-[#333333] text-xs font-medium"
                 >
                   Clear
                 </button>
@@ -239,35 +245,35 @@ export default function MiseFoodWorkspacePage() {
             </div>
           </div>
 
-          {/* Right Column: Minimalist Recipe Detail, Dietary Adaptations, Ingredients & Steps */}
+          {/* Right Column: Recipe Detail, 1-Click Adaptations, Ingredients & Timeline */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="rounded-[28px] bg-[#F6F6F4] border border-zinc-200/80 p-6 sm:p-8 space-y-6">
+            <div className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-6 space-y-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-2 max-w-2xl">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-                    <span className="font-medium text-[#C85A32] bg-[#C85A32]/10 px-2.5 py-0.5 rounded-full">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#333333]">
+                    <span className="font-semibold text-[#fcfcfd] bg-[#3f6212] px-2.5 py-0.5 rounded-full">
                       {selectedRecipe.cuisine}
                     </span>
-                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-zinc-200/80 text-zinc-700">
-                      <Clock className="h-3 w-3 text-zinc-400" />
+                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-[#333333] tabular-nums">
+                      <Clock className="h-3 w-3 text-[#3f6212]" />
                       {selectedRecipe.prep_time_minutes +
                         selectedRecipe.cook_time_minutes}{" "}
                       min
                     </span>
-                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-zinc-200/80 text-zinc-700">
-                      <Users className="h-3 w-3 text-zinc-400" />
+                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-[#333333] tabular-nums">
+                      <Users className="h-3 w-3 text-[#3f6212]" />
                       {currentServings} servings
                     </span>
-                    <span className="font-mono font-medium px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800">
+                    <span className="font-mono font-semibold px-2.5 py-0.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-[#3f6212] tabular-nums">
                       ₹{scaledTotalCost}
                     </span>
                   </div>
 
-                  <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight text-zinc-950">
+                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#000000]">
                     {selectedRecipe.title}
-                  </h1>
+                  </h2>
 
-                  <p className="text-sm text-zinc-600 leading-relaxed">
+                  <p className="text-sm text-[#333333] leading-relaxed">
                     {selectedRecipe.description}
                   </p>
                 </div>
@@ -275,18 +281,18 @@ export default function MiseFoodWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("sous-chef")}
-                  className="px-5 py-3 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-transform duration-150 ease-emil-out active:scale-[0.97]"
+                  className="btn-press px-5 py-3 rounded-full bg-[#3f6212] hover:bg-[#33500e] text-[#fcfcfd] font-medium text-xs sm:text-sm flex items-center gap-2"
                 >
-                  <Mic className="h-4 w-4 text-emerald-400" />
+                  <Mic className="h-4 w-4" />
                   <span>Cook Hands-Free</span>
                 </button>
               </div>
 
-              {/* Clean Dietary & Cooking Style Adaptations */}
-              <div className="pt-4 border-t border-zinc-200/80 space-y-2.5">
+              {/* 1-Click Dietary & Cooking Style Adaptations */}
+              <div className="pt-4 border-t border-[#d3d4c8] space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-zinc-500 flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-[#C85A32]" />
+                  <span className="text-xs font-semibold text-[#333333] flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-[#3f6212]" />
                     Adapt recipe in one click
                   </span>
                 </div>
@@ -316,10 +322,10 @@ export default function MiseFoodWorkspacePage() {
                       type="button"
                       disabled={activeRemixLoading !== null}
                       onClick={() => void handleOneClickAiRemix(item.mode)}
-                      className="px-3.5 py-2 rounded-full bg-white hover:bg-zinc-950 hover:text-white border border-zinc-200/90 text-xs font-medium text-zinc-800 flex items-center gap-1.5 transition-colors active:scale-[0.97] shadow-sm"
+                      className="btn-press px-3.5 py-1.5 rounded-full bg-[#f1f3e6] hover:bg-[#3f6212] hover:text-[#fcfcfd] border border-[#d3d4c8] text-xs font-medium text-[#000000] flex items-center gap-1.5"
                     >
                       {activeRemixLoading === item.mode && (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C85A32]" />
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       )}
                       <span>{item.label}</span>
                     </button>
@@ -327,22 +333,26 @@ export default function MiseFoodWorkspacePage() {
                 </div>
               </div>
 
-              {/* Personal Variation / Save Note */}
-              <div className="pt-3 border-t border-zinc-200/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              {/* Save Personal Version */}
+              <div className="pt-3 border-t border-[#d3d4c8] flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <label htmlFor="remix-note-input" className="sr-only">
+                  Personal recipe note
+                </label>
                 <input
+                  id="remix-note-input"
                   type="text"
                   value={remixNote}
                   onChange={(e) => setRemixNote(e.target.value)}
                   placeholder="Add a personal note (e.g., extra ginger, less chili)..."
-                  className="flex-1 rounded-full bg-white border border-zinc-200/90 px-4 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900"
+                  className="flex-1 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] px-4 py-2 text-xs text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
                 />
                 <button
                   type="button"
                   disabled={isForking}
                   onClick={() => void handleForkRemix()}
-                  className="px-4 py-2 rounded-full bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200/90 text-xs font-medium flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                  className="btn-press px-4 py-2 rounded-full bg-[#f1f3e6] hover:border-[#3f6212] text-[#000000] border border-[#d3d4c8] text-xs font-medium flex items-center justify-center gap-1.5"
                 >
-                  <GitFork className="h-3.5 w-3.5 text-zinc-500" />
+                  <GitFork className="h-3.5 w-3.5 text-[#3f6212]" />
                   <span>{isForking ? "Saving..." : "Save My Version"}</span>
                 </button>
               </div>

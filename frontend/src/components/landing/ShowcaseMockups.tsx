@@ -1,361 +1,213 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
-  CheckCircle2,
+  Check,
+  Clock,
+  ExternalLink,
   Flame,
   GitMerge,
-  Mic,
   Scale,
   ShoppingCart,
   Sparkles,
-  Wand2,
 } from "lucide-react";
 
 /**
- * Showcase 1 Visual (00:01 - Vertus AI equivalent):
- * Dark volcanic slate environment with an angled laptop screen displaying
- * a crimson/saffron neural surface and live Katori + Gemini OCR extraction.
+ * Feature Row 1 Working UI Mockup:
+ * Universal Link, Reel & Photo Importer + Katori Scaling + 1-Click Dietary Remix.
+ * Built with real working interactive controls on the #f1f3e6 / #e9eade / #3f6212 system.
  */
-export function ImporterMacbookShowcase({
+export function ImporterFeatureMockup({
   onLaunch,
+  onOpenImporter,
 }: {
   onLaunch: () => void;
+  onOpenImporter: () => void;
 }) {
+  const [unit, setUnit] = useState<"katori" | "metric" | "us">("katori");
+  const [dietMode, setDietMode] = useState<
+    "original" | "high_protein" | "jain" | "air_fryer"
+  >("original");
+
+  const rows = [
+    {
+      name:
+        dietMode === "high_protein"
+          ? "Low-Fat Malai Paneer + Soya Granules"
+          : "Fresh Malai Paneer (cubed)",
+      qty:
+        unit === "katori"
+          ? dietMode === "high_protein"
+            ? "2.2 katori"
+            : "1.67 katori"
+          : unit === "metric"
+            ? dietMode === "high_protein"
+              ? "330 g"
+              : "250 g"
+            : dietMode === "high_protein"
+              ? "11.6 oz"
+              : "8.8 oz",
+      meta:
+        dietMode === "high_protein"
+          ? "62g Protein • ₹145"
+          : "45g Protein • ₹115",
+      aisle: "Dairy & Paneer",
+    },
+    {
+      name:
+        dietMode === "jain"
+          ? "Asafoetida (Hing) & Ginger-Fennel Paste"
+          : "Charred Red Onion & Garlic Paste",
+      qty:
+        unit === "katori"
+          ? "0.5 katori"
+          : unit === "metric"
+            ? "75 g"
+            : "0.33 cup",
+      meta:
+        dietMode === "jain"
+          ? "No Onion-Garlic • ₹18"
+          : "Aromatic Base • ₹22",
+      aisle: dietMode === "jain" ? "Spices & Masalas" : "Produce",
+    },
+    {
+      name:
+        dietMode === "air_fryer"
+          ? "Cold-Pressed Mustard Oil Spray (-65%)"
+          : "Cultured Cow Ghee (for Tadka)",
+      qty:
+        unit === "katori"
+          ? dietMode === "air_fryer"
+            ? "1 tsp"
+            : "2 tbsp"
+          : unit === "metric"
+            ? dietMode === "air_fryer"
+              ? "5 ml"
+              : "30 ml"
+            : dietMode === "air_fryer"
+              ? "0.17 fl oz"
+              : "1 fl oz",
+      meta:
+        dietMode === "air_fryer"
+          ? "45 kcal • 200°C 9m"
+          : "240 kcal • Dhungar",
+      aisle: "Dairy & Oils",
+    },
+  ];
+
   return (
-    <div
-      onClick={onLaunch}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onLaunch();
-      }}
-      className="cursor-pointer group relative w-full min-h-[360px] sm:min-h-[430px] bg-gradient-to-br from-[#232528] via-[#16171A] to-[#0D0E10] p-6 sm:p-10 flex items-center justify-center overflow-hidden"
-    >
-      {/* Subtle architectural stone texture glow */}
-      <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-rose-500/15 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-28 -left-20 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl" />
-
-      {/* Angled Laptop Hardware Frame */}
-      <div className="relative w-full max-w-xl rounded-2xl bg-[#0A0B0D] border border-white/15 shadow-[0_30px_80px_rgba(0,0,0,0.75)] p-2.5 sm:p-3.5 transition-transform duration-500 ease-emil-out group-hover:-translate-y-1.5">
-        {/* Top camera notch */}
-        <div className="mx-auto mb-2 h-1 w-12 rounded-full bg-zinc-800" />
-
-        {/* Screen Content: Crimson / Saffron Topographic Shader + Recipe Studio UI */}
-        <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-[#3A0CA3] via-[#7209B7] to-[#F72585] p-5 sm:p-7 text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,160,122,0.38),transparent_60%)]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/20" />
-
-          <div className="relative z-10 space-y-5">
-            {/* Top Mini Nav */}
-            <div className="flex items-center justify-between text-[11px] text-white/80 border-b border-white/15 pb-3">
-              <span className="font-semibold tracking-tight text-white flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-rose-300" />
-                MISEFOOD STUDIO
-              </span>
-              <div className="flex items-center gap-3 text-[10px] text-white/70">
-                <span>URL / Reel</span>
-                <span>Vision OCR</span>
-                <span>150ml Katori</span>
-                <span className="px-2 py-0.5 rounded-full bg-white text-zinc-950 font-medium">
-                  Live Parser
-                </span>
-              </div>
-            </div>
-
-            {/* Centerpiece Display */}
-            <div className="py-3 space-y-2">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-white/15 backdrop-blur-md text-rose-100 border border-white/20">
-                Link, Video &amp; Cookbook Photo Import
-              </span>
-              <h4 className="text-xl sm:text-2xl font-medium tracking-tight leading-snug text-white max-w-md">
-                Turn Any Saved Link or Recipe Card into Exact Katori &amp; Gram
-                Measurements.
-              </h4>
-            </div>
-
-            {/* Bottom Live Normalized Chips */}
-            <div className="grid grid-cols-3 gap-2.5 pt-2">
-              <div className="rounded-lg bg-black/55 backdrop-blur-md border border-white/15 p-2.5">
-                <p className="text-[10px] text-rose-200/80 font-mono">
-                  MALAI PANEER
-                </p>
-                <p className="text-xs font-semibold text-white mt-0.5">
-                  1.67 Katori (250g)
-                </p>
-                <p className="text-[10px] text-emerald-300 mt-0.5">
-                  45g Protein • ₹115
-                </p>
-              </div>
-              <div className="rounded-lg bg-black/55 backdrop-blur-md border border-white/15 p-2.5">
-                <p className="text-[10px] text-rose-200/80 font-mono">
-                  1-CLICK REMIX
-                </p>
-                <p className="text-xs font-semibold text-white mt-0.5 flex items-center gap-1">
-                  <Wand2 className="h-3 w-3 text-amber-300" />
-                  Jain / High-P
-                </p>
-                <p className="text-[10px] text-zinc-300 mt-0.5">
-                  Auto-swaps aromatics
-                </p>
-              </div>
-              <div className="rounded-lg bg-black/55 backdrop-blur-md border border-white/15 p-2.5">
-                <p className="text-[10px] text-rose-200/80 font-mono">
-                  AIR-FRYER MODE
-                </p>
-                <p className="text-xs font-semibold text-white mt-0.5 flex items-center gap-1">
-                  <Flame className="h-3 w-3 text-rose-300" />
-                  200°C • 9 mins
-                </p>
-                <p className="text-[10px] text-emerald-300 mt-0.5">
-                  -65% Oil Reduction
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Laptop Base Lip */}
-        <div className="mt-2.5 mx-auto h-1.5 w-24 rounded-full bg-zinc-700/70" />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Showcase 2 Visual (00:03 - TitanX equivalent):
- * Thick dark tablet bezel displaying dual high-contrast comparison cards
- * with neon magenta/rose progress bars ("Active Prep Overlap" vs "Sequential Cooking").
- */
-export function KineticTabletShowcase({
-  onLaunch,
-}: {
-  onLaunch: () => void;
-}) {
-  return (
-    <div
-      onClick={onLaunch}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onLaunch();
-      }}
-      className="cursor-pointer group relative w-full min-h-[360px] sm:min-h-[430px] bg-[#E3E5E8] p-4 sm:p-8 flex items-center justify-center"
-    >
-      {/* Thick Matte Black Tablet Bezel */}
-      <div className="w-full rounded-[26px] bg-[#0B0C0E] p-4 sm:p-6 shadow-[0_24px_60px_rgba(0,0,0,0.22)] border border-zinc-800 transition-transform duration-500 ease-emil-out group-hover:scale-[1.01]">
-        <div className="rounded-2xl bg-[#111317] border border-white/10 p-5 sm:p-6 text-white space-y-6">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between text-[11px] text-zinc-400">
-            <span className="font-bold tracking-wider text-white flex items-center gap-1.5">
-              <GitMerge className="h-3.5 w-3.5 text-rose-500" />
-              COOK TOGETHER
-            </span>
-            <div className="hidden sm:flex items-center gap-4 text-[10px]">
-              <span>Smart Timing</span>
-              <span>Active/Passive Overlap</span>
-              <span>Multi-Dish Timers</span>
-            </div>
-            <span className="px-2.5 py-1 rounded-md bg-rose-600 text-white text-[10px] font-semibold">
-              Combine 4 Dishes
-            </span>
-          </div>
-
-          {/* Split Body */}
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center pt-1">
-            <div className="sm:col-span-5 space-y-3">
-              <p className="text-lg sm:text-xl font-normal tracking-tight leading-snug text-zinc-100">
-                38% Faster Meal Prep with{" "}
-                <span className="font-semibold text-white">
-                  SMART STEP OVERLAP
-                </span>
-              </p>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Automatically slots onion/tomato chopping and tadka tempering
-                inside pressure-cooker &amp; marination wait windows.
-              </p>
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-600/90 text-white text-[11px] font-medium">
-                Open Combined Timeline →
-              </span>
-            </div>
-
-            {/* Dual Comparison Cards (Prompts vs Kinetic Overlap) */}
-            <div className="sm:col-span-7 grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-[#181A20] border border-white/10 p-3.5 space-y-3">
-                <div className="flex items-center justify-between text-[10px] text-zinc-400">
-                  <span>Sequential Cook</span>
-                  <span className="font-mono text-zinc-500">1 Dish / Track</span>
-                </div>
-                <div>
-                  <div className="flex items-baseline justify-between text-xs mb-1">
-                    <span className="text-zinc-400">Idle Wait</span>
-                    <span className="font-mono text-white font-semibold">
-                      42%
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                    <div className="h-full w-[42%] bg-zinc-500 rounded-full" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/5 text-[10px]">
-                  <div>
-                    <p className="text-zinc-500">Total Time</p>
-                    <p className="text-sm font-semibold text-zinc-200 mt-0.5">
-                      68m
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-zinc-500">Hot Finish</p>
-                    <p className="text-sm font-semibold text-zinc-400 mt-0.5">
-                      1 of 3
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-xl bg-[#1C1520] border border-rose-500/40 p-3.5 space-y-3 shadow-lg shadow-rose-950/30">
-                <div className="flex items-center justify-between text-[10px] text-rose-300">
-                  <span className="font-semibold">Kinetic DAG</span>
-                  <span className="font-mono">Interleaved</span>
-                </div>
-                <div>
-                  <div className="flex items-baseline justify-between text-xs mb-1">
-                    <span className="text-rose-200">Active Overlap</span>
-                    <span className="font-mono text-rose-400 font-semibold">
-                      94%
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                    <div className="h-full w-[94%] bg-gradient-to-r from-rose-500 to-amber-400 rounded-full" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-rose-500/20 text-[10px]">
-                  <div>
-                    <p className="text-rose-200/70">Total Time</p>
-                    <p className="text-sm font-semibold text-white mt-0.5">
-                      42m
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-rose-200/70">Hot Finish</p>
-                    <p className="text-sm font-semibold text-emerald-400 mt-0.5">
-                      All 3 Dishes
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Showcase 3 Visual (00:04 - Metapic equivalent):
- * Warm terracotta/coral architectural background with a dark desktop screen
- * and an overlapping coral/pink smartphone mockup in the foreground.
- */
-export function ThaliPlannerDualShowcase({
-  onLaunch,
-}: {
-  onLaunch: () => void;
-}) {
-  return (
-    <div
-      onClick={onLaunch}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onLaunch();
-      }}
-      className="cursor-pointer group relative w-full min-h-[360px] sm:min-h-[430px] bg-gradient-to-br from-[#D98A6C] via-[#C86D51] to-[#8C3F2B] p-6 sm:p-10 flex items-center justify-center overflow-hidden"
-    >
-      {/* Ambient warm sun flare */}
-      <div className="pointer-events-none absolute top-0 left-1/4 w-96 h-96 rounded-full bg-amber-200/25 blur-3xl" />
-
-      {/* Desktop Frame */}
-      <div className="relative w-full max-w-xl rounded-2xl bg-[#0D0E11] border border-white/15 p-4 sm:p-6 shadow-[0_28px_70px_rgba(0,0,0,0.55)] text-white transition-transform duration-500 ease-emil-out group-hover:-translate-y-1">
-        <div className="flex items-center justify-between text-[11px] text-zinc-400 border-b border-white/10 pb-3">
-          <span className="font-semibold text-white flex items-center gap-1.5">
-            <Scale className="h-3.5 w-3.5 text-rose-400" />
-            misefood planner
-          </span>
-          <div className="hidden sm:flex items-center gap-3 text-[10px]">
-            <span>Composite Thali</span>
-            <span>2000 kcal Target</span>
-            <span>₹2,500 Budget</span>
-          </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-rose-400/20 text-rose-200 border border-rose-400/30 text-[10px]">
-            7-Day Solver
+    <div className="rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] p-5 sm:p-6 space-y-5">
+      {/* Top Interactive Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#d3d4c8]">
+        <div className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3f6212]" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#000000]">
+            Normalized Recipe Schema
           </span>
         </div>
 
-        <div className="py-6 sm:py-8 text-center space-y-2 max-w-md mx-auto">
-          <h4 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
-            Where Macros and Indian Thalis Grow Together
-          </h4>
-          <p className="text-xs text-zinc-400">
-            Rice/Roti + Dal Tadka + Paneer Sabji + Raita balanced to the exact
-            rupee &amp; gram.
-          </p>
+        {/* Working Unit Switcher */}
+        <div
+          role="group"
+          aria-label="Preview unit system"
+          className="inline-flex items-center rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-0.5 text-xs"
+        >
+          {(
+            [
+              { id: "katori", label: "150ml Katori" },
+              { id: "metric", label: "Metric (g)" },
+              { id: "us", label: "US Cup" },
+            ] as const
+          ).map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setUnit(item.id)}
+              className={`btn-press px-2.5 py-1 rounded-[6px] font-medium ${
+                unit === item.id
+                  ? "bg-[#3f6212] text-[#fcfcfd]"
+                  : "text-[#333333] hover:text-[#000000]"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* Bottom miniature 4-slot Thali preview */}
-        <div className="grid grid-cols-3 gap-2.5 pt-2 text-left">
-          <div className="rounded-xl bg-white/5 border border-white/10 p-2.5">
-            <span className="text-[10px] text-amber-300 font-mono">
-              MON LUNCH THALI
-            </span>
-            <p className="text-xs font-medium text-white mt-0.5 truncate">
-              Dal + Paneer + Jeera Rice
-            </p>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
-              685 kcal • 44g P • ₹175
-            </p>
-          </div>
-          <div className="rounded-xl bg-white/5 border border-white/10 p-2.5">
-            <span className="text-[10px] text-emerald-300 font-mono">
-              WED HIGH-PROTEIN
-            </span>
-            <p className="text-xs font-medium text-white mt-0.5 truncate">
-              Air-Fryer Tikka + Curd
-            </p>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
-              620 kcal • 52g P • ₹190
-            </p>
-          </div>
-          <div className="rounded-xl bg-white/5 border border-white/10 p-2.5">
-            <span className="text-[10px] text-sky-300 font-mono">
-              WEEKLY BUDGET
-            </span>
-            <p className="text-xs font-medium text-white mt-0.5">
-              ₹1,840 / ₹2,500
-            </p>
-            <p className="text-[10px] text-emerald-300 mt-0.5">
-              Under budget by ₹660
-            </p>
-          </div>
+      {/* Interactive 1-Click Dietary Adaptation Bar */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-xs text-[#4d4c4c]">
+          <span className="flex items-center gap-1.5 font-medium text-[#333333]">
+            <Sparkles className="h-3.5 w-3.5 text-[#3f6212]" />
+            Click a dietary mode to preview live ingredient &amp; macro adaptation:
+          </span>
         </div>
+        <div className="flex flex-wrap gap-2">
+          {(
+            [
+              { id: "original", label: "Classic Dhaba" },
+              { id: "high_protein", label: "High-Protein (+40%)" },
+              { id: "jain", label: "Jain (No Onion-Garlic)" },
+              { id: "air_fryer", label: "Air-Fryer (-65% Oil)" },
+            ] as const
+          ).map((mode) => (
+            <button
+              key={mode.id}
+              type="button"
+              onClick={() => setDietMode(mode.id)}
+              className={`btn-press px-3 py-1.5 rounded-full text-xs font-medium border ${
+                dietMode === mode.id
+                  ? "bg-[#3f6212] text-[#fcfcfd] border-[#3f6212]"
+                  : "bg-[#e9eade] text-[#000000] border-[#d3d4c8] hover:border-[#3f6212]"
+              }`}
+            >
+              {mode.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* Overlapping Foreground Coral/Pink Phone Mockup (matching 00:04 center-bottom) */}
-        <div className="hidden sm:flex flex-col justify-between w-40 h-44 rounded-t-2xl bg-gradient-to-b from-[#F4A5AE] to-[#E57F8E] text-zinc-950 p-3.5 mx-auto -mb-6 mt-4 shadow-2xl border-2 border-zinc-900 transition-transform duration-500 ease-emil-out group-hover:-translate-y-2">
-          <div className="w-8 h-1 rounded-full bg-zinc-900/30 mx-auto" />
-          <div className="text-center space-y-1 my-auto">
-            <p className="text-[10px] font-mono uppercase tracking-wider text-zinc-900/75">
-              DAILY ROLLUP
-            </p>
-            <p className="text-lg font-bold tracking-tight leading-none">
-              134g Protein
-            </p>
-            <p className="text-[11px] font-medium text-zinc-900/80">
-              1,980 kcal • ₹262/day
-            </p>
+      {/* Live Ingredient Rows */}
+      <div className="space-y-2">
+        {rows.map((row) => (
+          <div
+            key={row.name}
+            className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] px-3.5 py-2.5 flex items-center justify-between gap-3"
+          >
+            <div>
+              <p className="text-sm font-medium text-[#000000]">{row.name}</p>
+              <p className="text-xs text-[#4d4c4c]">
+                Aisle: {row.aisle} • {row.meta}
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-[6px] bg-[#f1f3e6] border border-[#d3d4c8] font-mono text-xs font-semibold text-[#000000] tabular-nums shrink-0">
+              {row.qty}
+            </span>
           </div>
-          <div className="rounded-lg bg-zinc-950 text-white text-[10px] font-medium py-1.5 text-center">
-            Sync Quick Cart
-          </div>
+        ))}
+      </div>
+
+      {/* Bottom Action Footer */}
+      <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#d3d4c8] text-xs">
+        <span className="text-[#4d4c4c]">
+          Parsed from Instagram Reel + Handwritten Masala Card
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenImporter}
+            className="btn-press px-3 py-1.5 rounded-full bg-[#e9eade] border border-[#d3d4c8] text-[#000000] font-medium"
+          >
+            Import Your Own Link
+          </button>
+          <button
+            type="button"
+            onClick={onLaunch}
+            className="btn-press px-3.5 py-1.5 rounded-full bg-[#3f6212] text-[#fcfcfd] font-medium"
+          >
+            Open in Studio →
+          </button>
         </div>
       </div>
     </div>
@@ -363,101 +215,394 @@ export function ThaliPlannerDualShowcase({
 }
 
 /**
- * Showcase 4 Visual (00:05 - AlphaLedger equivalent):
- * Crisp white high-contrast audit dashboard inside a sleek black laptop bezel.
+ * Feature Row 2 Working UI Mockup:
+ * Multi-Dish Parallel Cooking Timeline (Active Prep vs. Passive Simmer Gantt UI).
  */
-export function PantryCartAuditShowcase({
+export function ParallelTimelineFeatureMockup({
   onLaunch,
+  onStartQuickTimer,
 }: {
   onLaunch: () => void;
+  onStartQuickTimer?: (label: string, seconds: number, stepNum: number) => void;
 }) {
+  const [mode, setMode] = useState<"parallel" | "sequential">("parallel");
+  const [selectedTrackIdx, setSelectedTrackIdx] = useState<number>(0);
+
+  const tracks = [
+    {
+      dish: "Smoke-Infused Dal Tadka",
+      step: "Pressure-cook Toor Dal (3 whistles)",
+      kind: "Passive Simmer",
+      window: mode === "parallel" ? "00m – 16m" : "00m – 24m",
+      leftPct: 0,
+      widthPct: mode === "parallel" ? 45 : 35,
+      seconds: 720,
+      note: "Hands-free pressure cooker window — use this 12m slot to marinate and cube paneer.",
+    },
+    {
+      dish: "Air-Fryer Malai Paneer Tikka",
+      step: "Dice paneer & whisk hung-curd marinade",
+      kind: "Active Prep (Overlapped)",
+      window: mode === "parallel" ? "03m – 14m" : "24m – 48m",
+      leftPct: mode === "parallel" ? 10 : 35,
+      widthPct: mode === "parallel" ? 34 : 35,
+      seconds: 540,
+      note: "Scheduled directly inside the Dal pressure-cooking wait window — saves 14 minutes.",
+    },
+    {
+      dish: "Jeera Basmati Rice + Tadka Finish",
+      step: "Soak rice, air-fry tikka at 200°C & temper ghee tadka",
+      kind: "Synchronized Hot Finish",
+      window: mode === "parallel" ? "16m – 42m" : "48m – 68m",
+      leftPct: mode === "parallel" ? 42 : 70,
+      widthPct: mode === "parallel" ? 58 : 30,
+      seconds: 600,
+      note: "All 3 dishes complete between minute 40 and 42 so every bowl hits the table piping hot.",
+    },
+  ];
+
+  const activeTrack = tracks[selectedTrackIdx] ?? tracks[0]!;
+
   return (
-    <div
-      onClick={onLaunch}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onLaunch();
-      }}
-      className="cursor-pointer group relative w-full min-h-[360px] sm:min-h-[430px] bg-[#E5E7EB] p-4 sm:p-8 flex items-center justify-center"
-    >
-      {/* Sleek Black Laptop Bezel with Crisp White Screen */}
-      <div className="w-full max-w-xl rounded-[24px] bg-[#0B0C0E] p-3.5 sm:p-5 shadow-[0_24px_60px_rgba(0,0,0,0.2)] border border-zinc-800 transition-transform duration-500 ease-emil-out group-hover:-translate-y-1">
-        <div className="rounded-xl bg-white text-zinc-950 p-5 sm:p-7 space-y-5">
-          {/* Top White Header */}
-          <div className="flex items-center justify-between border-b border-zinc-100 pb-3 text-xs">
-            <span className="font-bold tracking-tight text-zinc-950 flex items-center gap-1.5">
-              <ShoppingCart className="h-3.5 w-3.5 text-zinc-900" />
-              Smart Cart
-            </span>
-            <div className="hidden sm:flex items-center gap-4 text-[11px] text-zinc-500">
-              <span>Fridge Match</span>
-              <span>Aisle Grouping</span>
-              <span>Barcode Lookup</span>
-            </div>
-            <span className="px-2.5 py-1 rounded-full bg-zinc-950 text-white text-[10px] font-medium">
-              Shop 4 Apps
-            </span>
-          </div>
+    <div className="rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] p-5 sm:p-6 space-y-5">
+      {/* Header & Mode Comparison Toggle */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#d3d4c8]">
+        <div className="flex items-center gap-2">
+          <GitMerge className="h-4 w-4 text-[#3f6212]" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#000000]">
+            3-Dish Parallel Prep Schedule
+          </span>
+        </div>
 
-          {/* Center Audit Headline matching "Your Trading Audit" at 00:05 */}
-          <div className="text-center space-y-2 py-2">
-            <h4 className="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-950">
-              Your Pantry &amp; Cart Audit
-            </h4>
-            <p className="text-xs text-zinc-500 max-w-md mx-auto">
-              2 onions (Tue) + 1.5 onions (Fri) automatically merged into 3.5
-              onions, subtracted against live fridge stock, and deep-linked to
-              10-minute delivery.
-            </p>
-          </div>
+        <div className="inline-flex items-center rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-0.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setMode("parallel")}
+            className={`btn-press px-2.5 py-1 rounded-[6px] font-medium tabular-nums ${
+              mode === "parallel"
+                ? "bg-[#3f6212] text-[#fcfcfd]"
+                : "text-[#333333] hover:text-[#000000]"
+            }`}
+          >
+            Parallel (42m • All Hot)
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("sequential")}
+            className={`btn-press px-2.5 py-1 rounded-[6px] font-medium tabular-nums ${
+              mode === "sequential"
+                ? "bg-[#3f6212] text-[#fcfcfd]"
+                : "text-[#333333] hover:text-[#000000]"
+            }`}
+          >
+            Sequential (68m)
+          </button>
+        </div>
+      </div>
 
-          {/* Quick-Commerce & Pantry Rescue Pills */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+      {/* Time Ruler */}
+      <div className="flex items-center justify-between text-[11px] font-mono text-[#4d4c4c] px-1 tabular-nums">
+        <span>0m</span>
+        <span>10m</span>
+        <span>20m</span>
+        <span>30m</span>
+        <span>{mode === "parallel" ? "42m (Hot Finish)" : "68m"}</span>
+      </div>
+
+      {/* Interactive Gantt Bars */}
+      <div className="space-y-2.5">
+        {tracks.map((track, idx) => {
+          const isSelected = idx === selectedTrackIdx;
+          return (
+            <button
+              key={track.dish}
+              type="button"
+              onClick={() => setSelectedTrackIdx(idx)}
+              className={`btn-press w-full text-left rounded-[8px] p-3 border transition-colors ${
+                isSelected
+                  ? "bg-[#e9eade] border-[#3f6212]"
+                  : "bg-[#e9eade]/60 border-[#d3d4c8] hover:border-[#3f6212]/60"
+              }`}
+            >
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="font-semibold text-[#000000]">
+                  {track.dish}
+                </span>
+                <span className="font-mono text-[#333333] tabular-nums">
+                  {track.window} • {track.kind}
+                </span>
+              </div>
+              <div className="w-full h-6 rounded-[6px] bg-[#f1f3e6] border border-[#d3d4c8] relative overflow-hidden">
+                <div
+                  style={{
+                    marginLeft: `${track.leftPct}%`,
+                    width: `${track.widthPct}%`,
+                  }}
+                  className={`h-full px-2.5 flex items-center text-[11px] font-medium truncate transition-all duration-200 ${
+                    idx === 0
+                      ? "bg-[#d3d4c8] text-[#000000]"
+                      : "bg-[#3f6212] text-[#fcfcfd]"
+                  }`}
+                >
+                  {track.step}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected Track Detail & Live Timer Trigger */}
+      <div className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-3.5 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-[#333333] max-w-md">{activeTrack.note}</p>
+        <div className="flex items-center gap-2">
+          {onStartQuickTimer && (
+            <button
+              type="button"
+              onClick={() =>
+                onStartQuickTimer(
+                  `${activeTrack.dish}: ${activeTrack.step}`,
+                  activeTrack.seconds,
+                  selectedTrackIdx + 1
+                )
+              }
+              className="btn-press px-3 py-1.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-xs font-medium text-[#000000] inline-flex items-center gap-1.5"
+            >
+              <Clock className="h-3.5 w-3.5 text-[#3f6212]" />
+              <span>Start {Math.round(activeTrack.seconds / 60)}m Timer</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onLaunch}
+            className="btn-press px-3.5 py-1.5 rounded-full bg-[#3f6212] text-[#fcfcfd] text-xs font-medium"
+          >
+            Open Full Scheduler →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Feature Row 3 Working UI Mockup:
+ * Multi-Slot Indian Thali Planner & 10-Min Quick-Commerce Grocery Cart.
+ */
+export function ThaliAndCartFeatureMockup({
+  onLaunchPlanner,
+  onLaunchPantry,
+}: {
+  onLaunchPlanner: () => void;
+  onLaunchPantry: () => void;
+}) {
+  const [view, setView] = useState<"thali" | "cart">("thali");
+  const [checkedItems, setCheckedItems] = useState<string[]>([
+    "Cumin Seeds (Jeera) — 2 tbsp (Already in Pantry)",
+  ]);
+
+  const toggleItem = (item: string) => {
+    setCheckedItems((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    );
+  };
+
+  return (
+    <div className="rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] p-5 sm:p-6 space-y-5">
+      {/* Top Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#d3d4c8]">
+        <div className="flex items-center gap-2">
+          <Scale className="h-4 w-4 text-[#3f6212]" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#000000]">
+            Thali Macro Solver &amp; Grocery Cart
+          </span>
+        </div>
+
+        <div className="inline-flex items-center rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-0.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setView("thali")}
+            className={`btn-press px-2.5 py-1 rounded-[6px] font-medium ${
+              view === "thali"
+                ? "bg-[#3f6212] text-[#fcfcfd]"
+                : "text-[#333333] hover:text-[#000000]"
+            }`}
+          >
+            4-Slot Thali Plate
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("cart")}
+            className={`btn-press px-2.5 py-1 rounded-[6px] font-medium ${
+              view === "cart"
+                ? "bg-[#3f6212] text-[#fcfcfd]"
+                : "text-[#333333] hover:text-[#000000]"
+            }`}
+          >
+            10-Min Grocery Cart
+          </button>
+        </div>
+      </div>
+
+      {view === "thali" ? (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {[
               {
-                name: "Swiggy Instamart",
-                meta: "92% Match • ₹410",
-                dot: "bg-orange-500",
+                slot: "Slot 1 • Dal / Gravy",
+                dish: "Smoke-Infused Yellow Dal Tadka",
+                stats: "1.0 katori • 14g Protein • ₹48",
               },
               {
-                name: "Blinkit 10-Min",
-                meta: "14 Aisle Items",
-                dot: "bg-amber-400",
+                slot: "Slot 2 • High-Protein Sabji",
+                dish: "Air-Fryer Malai Paneer Tikka",
+                stats: "1.67 katori • 45g Protein • ₹115",
               },
               {
-                name: "Zepto Superfast",
-                meta: "Spices & Dairy",
-                dot: "bg-purple-600",
+                slot: "Slot 3 • Grain / Bread",
+                dish: "2 Phulka Rotis + Jeera Basmati",
+                stats: "1.0 katori • 8g Protein • ₹24",
               },
               {
-                name: "BigBasket Now",
-                meta: "Monthly Stock",
-                dot: "bg-emerald-600",
+                slot: "Slot 4 • Probiotic / Raita",
+                dish: "Roasted Cumin Boondi Raita",
+                stats: "0.75 katori • 7g Protein • ₹22",
               },
-            ].map((platform) => (
+            ].map((s) => (
               <div
-                key={platform.name}
-                className="rounded-xl bg-[#F6F7F9] border border-zinc-200/80 p-3 space-y-1"
+                key={s.slot}
+                className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-3.5 space-y-1"
               >
-                <div className="flex items-center gap-1.5">
-                  <span className={`h-2 w-2 rounded-full ${platform.dot}`} />
-                  <span className="text-[11px] font-semibold text-zinc-900 truncate">
-                    {platform.name}
-                  </span>
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono">
-                  {platform.meta}
-                </p>
-                <div className="flex items-center gap-1 text-[10px] text-emerald-700 font-medium pt-0.5">
-                  <CheckCircle2 className="h-3 w-3" />
-                  <span>Deep-link ready</span>
-                </div>
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#3f6212] font-semibold">
+                  {s.slot}
+                </span>
+                <p className="text-sm font-semibold text-[#000000]">{s.dish}</p>
+                <p className="text-xs text-[#4d4c4c] tabular-nums">{s.stats}</p>
               </div>
             ))}
           </div>
+
+          <div className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex flex-wrap items-center gap-4 tabular-nums">
+              <span className="font-semibold text-[#000000]">
+                Plate Total: 74g Protein
+              </span>
+              <span className="text-[#333333]">780 kcal</span>
+              <span className="font-mono font-semibold text-[#3f6212]">
+                ₹209 / Thali
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={onLaunchPlanner}
+              className="btn-press px-3.5 py-1.5 rounded-full bg-[#3f6212] text-[#fcfcfd] font-medium"
+            >
+              Plan Full 7-Day Week →
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            {[
+              {
+                label: "Fresh Malai Paneer — 500 g (Tue + Fri combined)",
+                cost: "₹230",
+                query: "fresh malai paneer 500g",
+              },
+              {
+                label: "Unpolished Toor Dal — 500 g",
+                cost: "₹95",
+                query: "toor dal 500g",
+              },
+              {
+                label: "Cumin Seeds (Jeera) — 2 tbsp (Already in Pantry)",
+                cost: "₹0 (Saved)",
+                query: "cumin seeds jeera",
+              },
+            ].map((item) => {
+              const checked = checkedItems.includes(item.label);
+              return (
+                <div
+                  key={item.label}
+                  className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] px-3.5 py-2.5 flex items-center justify-between gap-3"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleItem(item.label)}
+                    className="flex items-center gap-2.5 text-left"
+                  >
+                    <span
+                      className={`h-4 w-4 rounded-[4px] border flex items-center justify-center ${
+                        checked
+                          ? "bg-[#3f6212] border-[#3f6212] text-[#fcfcfd]"
+                          : "bg-[#f1f3e6] border-[#4d4c4c]"
+                      }`}
+                    >
+                      {checked && <Check className="h-3 w-3" />}
+                    </span>
+                    <span
+                      className={`text-xs sm:text-sm font-medium ${
+                        checked
+                          ? "line-through text-[#4d4c4c]"
+                          : "text-[#000000]"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </button>
+                  <span className="font-mono text-xs font-semibold text-[#333333] tabular-nums shrink-0">
+                    {item.cost}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                {
+                  name: "Swiggy Instamart",
+                  url: "https://www.swiggy.com/instamart/search?custom_back=true&query=malai+paneer",
+                },
+                {
+                  name: "Blinkit",
+                  url: "https://blinkit.com/s/?q=malai+paneer",
+                },
+                {
+                  name: "Zepto",
+                  url: "https://www.zeptonow.com/search?query=malai+paneer",
+                },
+                {
+                  name: "BigBasket",
+                  url: "https://www.bigbasket.com/ps/?q=malai+paneer",
+                },
+              ].map((store) => (
+                <a
+                  key={store.name}
+                  href={store.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-press px-2.5 py-1.5 rounded-full bg-[#e9eade] border border-[#d3d4c8] hover:border-[#3f6212] text-[#000000] font-medium inline-flex items-center gap-1"
+                >
+                  <ShoppingCart className="h-3 w-3 text-[#3f6212]" />
+                  <span>{store.name}</span>
+                  <ExternalLink className="h-2.5 w-2.5 text-[#4d4c4c]" />
+                </a>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={onLaunchPantry}
+              className="btn-press px-3.5 py-1.5 rounded-full bg-[#3f6212] text-[#fcfcfd] font-medium"
+            >
+              Open Pantry &amp; Cart →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

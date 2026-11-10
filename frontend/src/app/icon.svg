@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="62" height="62" rx="16" fill="#FFFFFF" stroke="#EAE2D7" stroke-width="1.25"/>
+  <path d="M23.5 26.8V22.8C19.2 22.6 16.2 19.6 16.2 15.6C16.2 11.5 19.5 8.4 23.6 8.4C25.1 8.4 26.4 8.9 27.5 9.7C28.8 6.8 31.6 5.2 35 5.6C38.6 6 41.2 8.7 41.4 12.2" stroke="#C44D28" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42.2 9.4C46.2 9.4 49.2 12.4 49.2 16.2C49.2 19.9 46.4 22.7 42.5 22.9V27.2C42.5 29.5 40.8 30.6 38 31.3C33.8 32.3 30.8 34.2 31.4 38.2" stroke="#DF9B35" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M25.5 34.5C23.5 30.2 26.2 27.6 30.5 25.4C34.8 23.2 36.2 20.4 33.4 16.8C31.2 14 31.8 11.4 33.8 9.8" stroke="#C44D28" stroke-width="2.7" stroke-linecap="round"/>
+  <path d="M28.6 37.6C26.5 33.2 29.2 30.2 33.8 28C37.6 26.2 39.2 23.2 37.5 19.5" stroke="#DF9B35" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M18.2 41.2C16.8 37.2 18.2 32.8 21.5 30.2L29.2 39.2L28.5 41.2H18.2Z" fill="#C44D28"/>
+  <path d="M20.2 39.8C19.3 37.2 20.1 34.2 22.2 32.4" stroke="#F7D6C4" stroke-width="1.2" stroke-linecap="round"/>
+  <circle cx="22.5" cy="36.2" r="0.85" fill="#FBE5B5"/>
+  <circle cx="24.4" cy="38.2" r="0.85" fill="#FBE5B5"/>
+  <path d="M29.2 41.2C29.2 37.8 31.9 35.2 35.2 35.2C38.5 35.2 41.2 37.8 41.2 41.2H29.2Z" fill="#DF9B35"/>
+  <path d="M31.8 41.2C31.8 39.3 33.3 37.8 35.2 37.8C37.1 37.8 38.6 39.3 38.6 41.2" fill="#F3C167"/>
+  <path d="M41.5 41.2L45.2 35.8" stroke="#6A7B41" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M42.8 38.8C39.8 38.2 38.8 35.5 40.8 33.6C42.8 33.5 44 35.8 42.8 38.8Z" fill="#6A7B41"/>
+  <path d="M44.5 36.5C43.5 33.2 45.5 30.5 48.2 31.2C49.5 33.5 47.8 36.2 44.5 36.5Z" fill="#6A7B41"/>
+  <path d="M44.2 39.5C46.5 37.5 49.8 37.8 50.2 40.2C48.8 41.6 46 41.4 44.2 39.5Z" fill="#6A7B41"/>
+  <path d="M15.2 42H48.8C48.2 50.2 42.4 55.6 38.8 56.6V58C38.8 58.8 38.1 59.4 37.2 59.4H26.8C25.9 59.4 25.2 58.8 25.2 58V56.6C21.6 55.6 15.8 50.2 15.2 42Z" fill="#1E1612"/>
+  <path d="M18.6 44.4H20.8C21.5 49.2 24.2 53.2 27.6 55.2C23.2 53.6 19.5 49.6 18.6 44.4Z" fill="#FFFFFF"/>
+</svg>
