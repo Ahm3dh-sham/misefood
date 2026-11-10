@@ -23,6 +23,11 @@ import {
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import type { ActiveTab } from "@/components/layout/AppShell";
 import {
+  MiseFoodGlyph,
+  MiseFoodLogo,
+  type LogoVariant,
+} from "@/components/brand/MiseFoodLogo";
+import {
   ParallaxShowcaseFrame,
   ScrollHeadlineReveal,
   ScrollServiceRow,
@@ -197,6 +202,7 @@ export function EloqwntLandingShell({
   const [showreelPlaying, setShowreelPlaying] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
+  const [logoVariant, setLogoVariant] = useState<LogoVariant>("crown-katori");
 
   // Interactive "Tell us about your next stage" AI Concierge state
   const [chefName, setChefName] = useState("");
@@ -320,14 +326,48 @@ export function EloqwntLandingShell({
       {/* Minimalist Architectural Sticky Top Bar on #ECEEF0 */}
       <header className="sticky top-0 z-40 bg-[#ECEEF0]/85 backdrop-blur-xl border-b border-zinc-300/60">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-5">
             <a
               href="#top"
-              className="text-xl font-bold tracking-[-0.04em] text-zinc-950 flex items-center gap-1.5"
+              className="flex items-center gap-2.5 group"
             >
-              <span>misefood</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
+              <MiseFoodLogo
+                variant={logoVariant}
+                size={36}
+                showWordmark={true}
+                theme="light"
+              />
             </a>
+
+            {/* Live Warm Logo Concept Switcher (6 Bowl + Chef Cap Marks) */}
+            <div
+              title="Switch Bowl + Chef Cap Logo Concept"
+              className="hidden xl:flex items-center gap-1 bg-[#F7F3EC] px-2 py-1 rounded-full border border-[#E2D6C5]"
+            >
+              {(
+                [
+                  { id: "crown-katori", label: "1. Toque Katori" },
+                  { id: "steam-negative", label: "2. Steam Toque" },
+                  { id: "monoline-crest", label: "3. Monoline" },
+                  { id: "m-monogram", label: "4. M-Bowl" },
+                  { id: "seal-emblem", label: "5. Seal" },
+                  { id: "horizon-duet", label: "6. Horizon" },
+                ] as const
+              ).map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setLogoVariant(v.id)}
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors ${
+                    logoVariant === v.id
+                      ? "bg-[#C85A32] text-[#FAF5EE]"
+                      : "text-[#6E5A4F] hover:text-[#1E1916]"
+                  }`}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
 
             <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-zinc-600">
               <a
@@ -1532,9 +1572,12 @@ export function EloqwntLandingShell({
           <div className="pt-8 border-t border-zinc-300/80 flex flex-wrap items-center justify-between gap-4">
             <a
               href="#top"
-              className="text-2xl font-bold tracking-[-0.04em] text-zinc-950"
+              className="inline-flex items-center gap-2.5"
             >
-              misefood
+              <MiseFoodGlyph variant={logoVariant} size={34} />
+              <span className="text-2xl font-switzer font-bold tracking-[-0.04em] text-[#1E1916]">
+                misefood
+              </span>
             </a>
 
             <p className="text-xs text-zinc-500">
