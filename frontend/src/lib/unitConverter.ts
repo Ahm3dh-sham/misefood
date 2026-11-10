@@ -15,6 +15,16 @@ const TO_GRAMS_OR_ML: Record<string, number> = {
   fl_oz: 29.57,
 };
 
+export interface FormattedIngredientDisplay {
+  quantity: number;
+  unit: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  costInr: number;
+}
+
 /**
  * Instant client-side unit & serving converter between:
  * - Indian Kitchen Metrics (katori, tbsp, tsp, pinch, piece)
@@ -25,9 +35,12 @@ export function formatIngredientForDisplay(
   ing: NormalizedIngredient,
   unitSystem: UnitSystem,
   scaleFactor: number
-): { quantity: number; unit: string; calories: number; costInr: number } {
+): FormattedIngredientDisplay {
   const scaledQty = ing.quantity * scaleFactor;
   const calories = Math.round(ing.nutrition_meta.calories_kcal * scaleFactor);
+  const protein = Number((ing.nutrition_meta.protein_g * scaleFactor).toFixed(1));
+  const carbs = Number((ing.nutrition_meta.carbs_g * scaleFactor).toFixed(1));
+  const fat = Number((ing.nutrition_meta.fat_g * scaleFactor).toFixed(1));
   const costInr = Math.round(
     (ing.nutrition_meta.estimated_cost_inr ?? 25) * scaleFactor
   );
@@ -38,6 +51,9 @@ export function formatIngredientForDisplay(
       quantity: Number(Math.max(0.25, scaledQty).toFixed(2)),
       unit: rawUnit,
       calories,
+      protein,
+      carbs,
+      fat,
       costInr,
     };
   }
@@ -50,6 +66,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 150).toFixed(2)),
         unit: "katori",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -58,6 +77,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 15).toFixed(1)),
         unit: "tbsp",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -66,6 +88,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 5).toFixed(1)),
         unit: "tsp",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -73,6 +98,9 @@ export function formatIngredientForDisplay(
       quantity: Math.max(1, Math.round(baseGrams / 0.5)),
       unit: "pinch",
       calories,
+      protein,
+      carbs,
+      fat,
       costInr,
     };
   }
@@ -83,6 +111,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 240).toFixed(2)),
         unit: "cup",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -91,6 +122,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 28.35).toFixed(1)),
         unit: "oz",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -99,6 +133,9 @@ export function formatIngredientForDisplay(
         quantity: Number((baseGrams / 15).toFixed(1)),
         unit: "tbsp",
         calories,
+        protein,
+        carbs,
+        fat,
         costInr,
       };
     }
@@ -106,6 +143,9 @@ export function formatIngredientForDisplay(
       quantity: Number(Math.max(0.25, baseGrams / 5).toFixed(1)),
       unit: "tsp",
       calories,
+      protein,
+      carbs,
+      fat,
       costInr,
     };
   }
@@ -121,6 +161,9 @@ export function formatIngredientForDisplay(
     quantity: Math.max(1, Math.round(baseGrams)),
     unit: isLiquid ? "ml" : "g",
     calories,
+    protein,
+    carbs,
+    fat,
     costInr,
   };
 }

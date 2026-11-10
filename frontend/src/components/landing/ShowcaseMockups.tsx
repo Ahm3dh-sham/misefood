@@ -66,11 +66,11 @@ export function ImporterMacbookShowcase({
             {/* Centerpiece Display */}
             <div className="py-3 space-y-2">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-white/15 backdrop-blur-md text-rose-100 border border-white/20">
-                gemini-3.8-flash • Multimodal OCR + Transcript
+                Link, Video &amp; Cookbook Photo Import
               </span>
               <h4 className="text-xl sm:text-2xl font-medium tracking-tight leading-snug text-white max-w-md">
-                Universal Recipe Intelligence — Stripping Fluff into Normalized
-                Katori &amp; Gram Schemas.
+                Turn Any Saved Link or Recipe Card into Exact Katori &amp; Gram
+                Measurements.
               </h4>
             </div>
 
@@ -149,25 +149,25 @@ export function KineticTabletShowcase({
           <div className="flex items-center justify-between text-[11px] text-zinc-400">
             <span className="font-bold tracking-wider text-white flex items-center gap-1.5">
               <GitMerge className="h-3.5 w-3.5 text-rose-500" />
-              KINETIC LOOP™
+              COOK TOGETHER
             </span>
             <div className="hidden sm:flex items-center gap-4 text-[10px]">
-              <span>DAG Scheduler</span>
+              <span>Smart Timing</span>
               <span>Active/Passive Overlap</span>
-              <span>Wake-Lock Timers</span>
+              <span>Multi-Dish Timers</span>
             </div>
             <span className="px-2.5 py-1 rounded-md bg-rose-600 text-white text-[10px] font-semibold">
-              Merge 4 Dishes
+              Combine 4 Dishes
             </span>
           </div>
 
-          {/* Split Body matching TitanX layout */}
+          {/* Split Body */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center pt-1">
             <div className="sm:col-span-5 space-y-3">
               <p className="text-lg sm:text-xl font-normal tracking-tight leading-snug text-zinc-100">
                 38% Faster Meal Prep with{" "}
                 <span className="font-semibold text-white">
-                  PARALLEL DAG SCHEDULING™
+                  SMART STEP OVERLAP
                 </span>
               </p>
               <p className="text-[11px] text-zinc-400 leading-relaxed">
@@ -175,7 +175,7 @@ export function KineticTabletShowcase({
                 inside pressure-cooker &amp; marination wait windows.
               </p>
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-600/90 text-white text-[11px] font-medium">
-                Launch Parallel Timeline →
+                Open Combined Timeline →
               </span>
             </div>
 
@@ -388,15 +388,15 @@ export function PantryCartAuditShowcase({
           <div className="flex items-center justify-between border-b border-zinc-100 pb-3 text-xs">
             <span className="font-bold tracking-tight text-zinc-950 flex items-center gap-1.5">
               <ShoppingCart className="h-3.5 w-3.5 text-zinc-900" />
-              MiseAudit™
+              Smart Cart
             </span>
             <div className="hidden sm:flex items-center gap-4 text-[11px] text-zinc-500">
-              <span>pgvector Rescue</span>
-              <span>Aisle De-duplication</span>
-              <span>EAN-13 Barcode</span>
+              <span>Fridge Match</span>
+              <span>Aisle Grouping</span>
+              <span>Barcode Lookup</span>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-zinc-950 text-white text-[10px] font-medium">
-              Export 4 Carts
+              Shop 4 Apps
             </span>
           </div>
 

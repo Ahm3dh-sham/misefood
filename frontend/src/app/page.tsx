@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  Flame,
+  Clock,
   GitFork,
   Loader2,
   Mic,
   Search,
   Sparkles,
-  Wand2,
+  Users,
 } from "lucide-react";
 import { type ActiveTab } from "@/components/layout/AppShell";
 import { EloqwntLandingShell } from "@/components/landing/EloqwntLandingShell";
@@ -51,6 +51,9 @@ export default function MiseFoodWorkspacePage() {
   const [isForking, setIsForking] = useState(false);
   const [activeRemixLoading, setActiveRemixLoading] =
     useState<RemixMode | null>(null);
+  const [plannerPrompt, setPlannerPrompt] = useState<string | undefined>(
+    undefined
+  );
 
   const {
     timers,
@@ -85,6 +88,7 @@ export default function MiseFoodWorkspacePage() {
     setCurrentServings(recipe.servings);
   };
 
+  // Bug #3 Fix: Recalculate recipe total cost when an ingredient is swapped
   const handleReplaceIngredient = (
     idx: number,
     replacement: NormalizedIngredient
@@ -92,7 +96,15 @@ export default function MiseFoodWorkspacePage() {
     setSelectedRecipe((prev) => {
       const nextIngs = [...prev.ingredients];
       nextIngs[idx] = replacement;
-      const updated = { ...prev, ingredients: nextIngs };
+      const recalculatedCost = nextIngs.reduce(
+        (sum, ing) => sum + (ing.nutrition_meta?.estimated_cost_inr ?? 25),
+        0
+      );
+      const updated: Recipe = {
+        ...prev,
+        ingredients: nextIngs,
+        estimated_total_cost_inr: Math.round(recalculatedCost),
+      };
       setRecipes((list) =>
         list.map((r) => (r.id === updated.id ? updated : r))
       );
@@ -122,7 +134,7 @@ export default function MiseFoodWorkspacePage() {
     try {
       const note =
         remixNote.trim() ||
-        `Scaled to ${currentServings} servings (${unitSystem} metrics)`;
+        `Scaled to ${currentServings} servings (${unitSystem})`;
       const forked = await forkRecipeOnServer(
         selectedRecipe,
         note,
@@ -136,14 +148,14 @@ export default function MiseFoodWorkspacePage() {
       const localFork: Recipe = {
         ...selectedRecipe,
         id: `fork-${Date.now()}`,
-        title: `${selectedRecipe.title} (Remix)`,
+        title: `${selectedRecipe.title} (My Version)`,
         servings: currentServings,
         parent_recipe_id: selectedRecipe.id,
         remix_note:
           remixNote.trim() ||
-          `Scaled to ${currentServings} servings (${unitSystem} metrics)`,
-        forks_count: 0,
-        likes_count: 1,
+          `Scaled to ${currentServings} servings (${unitSystem})`,
+        forks_count: (selectedRecipe.forks_count ?? 0) + 1,
+        likes_count: (selectedRecipe.likes_count ?? 0) + 1,
       };
       setRecipes((prev) => [localFork, ...prev]);
       setSelectedRecipe(localFork);
@@ -152,6 +164,14 @@ export default function MiseFoodWorkspacePage() {
       setIsForking(false);
     }
   };
+
+  const scaleFactor =
+    selectedRecipe.servings > 0
+      ? currentServings / selectedRecipe.servings
+      : 1;
+  const scaledTotalCost = Math.round(
+    selectedRecipe.estimated_total_cost_inr * scaleFactor
+  );
 
   return (
     <EloqwntLandingShell
@@ -166,45 +186,44 @@ export default function MiseFoodWorkspacePage() {
         setActiveTab("hub");
       }}
       activeTimers={timers}
+      onApplyConciergePrompt={(promptText) => {
+        setPlannerPrompt(promptText);
+        setActiveTab("planner");
+      }}
     >
       {activeTab === "hub" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Sidebar: Semantic Recipe Search & Social Feed */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Clean Recipe Library & Search */}
           <div className="lg:col-span-4 space-y-4">
             <form
               onSubmit={(e) => void handleSemanticSearch(e)}
-              className="rounded-2xl bg-charcoal border border-white/10 p-3.5 space-y-2.5"
+              className="flex items-center gap-2"
             >
-              <label className="text-xs font-medium text-zinc-300 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                  pgvector Semantic Recipe Search
-                </span>
-                <span className="font-mono text-[10px] text-zinc-500">
-                  gemini-embedding-2
-                </span>
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <Search className="h-3.5 w-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="e.g., paneer tikka, dal tadka, air-fryer, miso..."
-                    className="w-full rounded-xl bg-obsidian border border-white/10 pl-8 pr-3 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 text-xs font-medium active:scale-[0.97]"
-                >
-                  Match
-                </button>
+              <div className="relative flex-1">
+                <Search className="h-4 w-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search dishes, ingredients, or mood..."
+                  className="w-full rounded-full bg-[#F6F6F4] border border-zinc-200/80 pl-10 pr-4 py-2.5 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900 focus:bg-white transition-colors"
+                />
               </div>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    void reloadRecipes("");
+                  }}
+                  className="px-3 py-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 text-xs font-medium"
+                >
+                  Clear
+                </button>
+              )}
             </form>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {recipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
@@ -220,34 +239,35 @@ export default function MiseFoodWorkspacePage() {
             </div>
           </div>
 
-          {/* Main Recipe Detail: Header, 1-Click AI Remix Pills, Normalized Ingredients, Parallel Timeline */}
+          {/* Right Column: Minimalist Recipe Detail, Dietary Adaptations, Ingredients & Steps */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="rounded-2xl bg-charcoal border border-white/10 p-6 space-y-4">
+            <div className="rounded-[28px] bg-[#F6F6F4] border border-zinc-200/80 p-6 sm:p-8 space-y-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="space-y-1.5 max-w-2xl">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-medium uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                <div className="space-y-2 max-w-2xl">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                    <span className="font-medium text-[#C85A32] bg-[#C85A32]/10 px-2.5 py-0.5 rounded-full">
                       {selectedRecipe.cuisine}
                     </span>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/5 text-zinc-300 border border-white/10">
-                      Source: {selectedRecipe.source_type.replace("_", " ")}
+                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-zinc-200/80 text-zinc-700">
+                      <Clock className="h-3 w-3 text-zinc-400" />
+                      {selectedRecipe.prep_time_minutes +
+                        selectedRecipe.cook_time_minutes}{" "}
+                      min
                     </span>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                      ₹{Math.round(selectedRecipe.estimated_total_cost_inr)}
+                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-zinc-200/80 text-zinc-700">
+                      <Users className="h-3 w-3 text-zinc-400" />
+                      {currentServings} servings
                     </span>
-                    {selectedRecipe.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[11px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-300 border border-white/10"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    <span className="font-mono font-medium px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800">
+                      ₹{scaledTotalCost}
+                    </span>
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">
+
+                  <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight text-zinc-950">
                     {selectedRecipe.title}
                   </h1>
-                  <p className="text-sm text-zinc-300 leading-relaxed">
+
+                  <p className="text-sm text-zinc-600 leading-relaxed">
                     {selectedRecipe.description}
                   </p>
                 </div>
@@ -255,38 +275,39 @@ export default function MiseFoodWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("sous-chef")}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-obsidian font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
+                  className="px-5 py-3 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-transform duration-150 ease-emil-out active:scale-[0.97]"
                 >
-                  <Mic className="h-4 w-4" />
-                  <span>Start Hands-Free Cooking</span>
+                  <Mic className="h-4 w-4 text-emerald-400" />
+                  <span>Cook Hands-Free</span>
                 </button>
               </div>
 
-              {/* 1-Click AI Recipe Remix Bar */}
-              <div className="pt-3 border-t border-white/10 space-y-2">
-                <span className="text-xs font-medium text-amber-300 flex items-center gap-1.5">
-                  <Wand2 className="h-3.5 w-3.5" />
-                  1-Click AI Recipe Remix (LangGraph Dietary &amp; Technique
-                  Transformer):
-                </span>
+              {/* Clean Dietary & Cooking Style Adaptations */}
+              <div className="pt-4 border-t border-zinc-200/80 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-zinc-500 flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-[#C85A32]" />
+                    Adapt recipe in one click
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {(
                     [
                       {
                         mode: "high_protein",
-                        label: "💪 Make it High-Protein (+40% P)",
+                        label: "High-Protein (+40%)",
                       },
                       {
                         mode: "jain_no_onion_garlic",
-                        label: "🌿 Jain-Friendly (No Onion-Garlic)",
+                        label: "Jain (No Onion-Garlic)",
                       },
                       {
                         mode: "vegan",
-                        label: "🌱 Veganize (Tofu & Cashew Malai)",
+                        label: "Plant-Based / Vegan",
                       },
                       {
                         mode: "air_fryer",
-                        label: "🔥 Air-Fryer Version (-65% Oil)",
+                        label: "Air-Fryer (-65% Oil)",
                       },
                     ] as const
                   ).map((item) => (
@@ -295,12 +316,10 @@ export default function MiseFoodWorkspacePage() {
                       type="button"
                       disabled={activeRemixLoading !== null}
                       onClick={() => void handleOneClickAiRemix(item.mode)}
-                      className="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-amber-500/15 border border-white/15 hover:border-amber-500/40 text-xs text-zinc-200 hover:text-amber-200 flex items-center gap-1.5 transition-all active:scale-[0.97]"
+                      className="px-3.5 py-2 rounded-full bg-white hover:bg-zinc-950 hover:text-white border border-zinc-200/90 text-xs font-medium text-zinc-800 flex items-center gap-1.5 transition-colors active:scale-[0.97] shadow-sm"
                     >
-                      {activeRemixLoading === item.mode ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
-                      ) : (
-                        <Flame className="h-3.5 w-3.5 text-amber-400" />
+                      {activeRemixLoading === item.mode && (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C85A32]" />
                       )}
                       <span>{item.label}</span>
                     </button>
@@ -308,25 +327,23 @@ export default function MiseFoodWorkspacePage() {
                 </div>
               </div>
 
-              {/* Social Fork / Custom Remix Bar */}
-              <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              {/* Personal Variation / Save Note */}
+              <div className="pt-3 border-t border-zinc-200/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input
                   type="text"
                   value={remixNote}
                   onChange={(e) => setRemixNote(e.target.value)}
-                  placeholder="Or save your own custom household fork note..."
-                  className="flex-1 rounded-xl bg-obsidian border border-white/10 px-3.5 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50"
+                  placeholder="Add a personal note (e.g., extra ginger, less chili)..."
+                  className="flex-1 rounded-full bg-white border border-zinc-200/90 px-4 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-900"
                 />
                 <button
                   type="button"
                   disabled={isForking}
                   onClick={() => void handleForkRemix()}
-                  className="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-medium flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                  className="px-4 py-2 rounded-full bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200/90 text-xs font-medium flex items-center justify-center gap-1.5 active:scale-[0.97]"
                 >
-                  <GitFork className="h-3.5 w-3.5" />
-                  <span>
-                    {isForking ? "Forking..." : "Fork & Save Remix"}
-                  </span>
+                  <GitFork className="h-3.5 w-3.5 text-zinc-500" />
+                  <span>{isForking ? "Saving..." : "Save My Version"}</span>
                 </button>
               </div>
             </div>
@@ -361,7 +378,9 @@ export default function MiseFoodWorkspacePage() {
         />
       )}
 
-      {activeTab === "planner" && <SmartMealPlanner />}
+      {activeTab === "planner" && (
+        <SmartMealPlanner initialPrompt={plannerPrompt} />
+      )}
 
       {activeTab === "pantry" && (
         <PantryRescueView
@@ -379,6 +398,8 @@ export default function MiseFoodWorkspacePage() {
       {activeTab === "sous-chef" && (
         <HandsFreeCookView
           recipe={selectedRecipe}
+          currentServings={currentServings}
+          unitSystem={unitSystem}
           timers={timers}
           onStartTimer={startTimer}
           onToggleTimer={toggleTimer}

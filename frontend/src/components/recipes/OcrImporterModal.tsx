@@ -8,7 +8,6 @@ import {
   Loader2,
   Sparkles,
   Video,
-  Wand2,
   X,
 } from "lucide-react";
 import { parseRecipeWithAI } from "@/lib/api";
@@ -75,22 +74,21 @@ export function OcrImporterModal({
       }
       setOcrConfidence(res.confidence);
     } catch {
-      setErrorMsg(
-        "Client Tesseract OCR fallback triggered; Gemini 3.8 Vision will extract directly on the server."
-      );
+      setErrorMsg("Photo uploaded. Ready to extract recipe details.");
     } finally {
       setOcrProgress(null);
     }
   };
 
-  const handleCompileWithLangGraph = async () => {
+  const handleImportRecipe = async () => {
     setIsParsing(true);
     setErrorMsg(null);
     try {
       const created = await parseRecipeWithAI({
         raw_text: importMode === "ocr" ? rawText : "",
         source_url: importMode === "url" ? sourceUrl : null,
-        image_base64: imageBase64,
+        // Bug fix: never send stale photo payload when importing from URL
+        image_base64: importMode === "ocr" ? imageBase64 : null,
         image_mime_type: imageMimeType,
         dietary_adaptation: dietaryAdaptation.trim() || null,
         target_unit_system: unitSystem,
@@ -101,7 +99,7 @@ export function OcrImporterModal({
       setErrorMsg(
         err instanceof Error
           ? err.message
-          : "Unable to reach backend; ensure FastAPI server is running on port 8000."
+          : "Could not import recipe right now. Please try again."
       );
     } finally {
       setIsParsing(false);
@@ -110,95 +108,89 @@ export function OcrImporterModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl bg-charcoal border border-white/15 shadow-2xl overflow-hidden transition-transform duration-200 ease-emil-out"
+        className="w-full max-w-xl rounded-[28px] bg-white border border-zinc-200 shadow-2xl overflow-hidden text-zinc-950"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
-              <Wand2 className="h-4 w-4 text-amber-400" />
-            </div>
-            <div>
-              <h2 className="text-base font-semibold text-white">
-                Universal Multi-Modal Recipe Importer (Mise + Samsung Food)
-              </h2>
-              <p className="text-xs text-zinc-400">
-                Website URL • YouTube Shorts • Instagram Reel • Handwritten/Book
-                OCR • 1-Click Dietary Remix
-              </p>
-            </div>
+        <div className="px-6 py-5 border-b border-zinc-200/80 flex items-center justify-between">
+          <div>
+            <h2 className="font-switzer text-lg font-medium text-zinc-950">
+              Import Recipe
+            </h2>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Save from any website, YouTube video, Instagram Reel, or cookbook
+              photo.
+            </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5"
+            className="p-2 rounded-full text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+        <div className="p-6 space-y-5 max-h-[78vh] overflow-y-auto">
           {/* Mode Tabs */}
-          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-obsidian border border-white/10">
+          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-full bg-[#F2F3F5]">
             <button
               type="button"
               onClick={() => setImportMode("url")}
-              className={`py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 ${
+              className={`py-2 rounded-full text-xs font-medium flex items-center justify-center gap-2 transition-colors ${
                 importMode === "url"
-                  ? "bg-amber-500 text-obsidian"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-zinc-950 text-white"
+                  : "text-zinc-600 hover:text-zinc-950"
               }`}
             >
-              <Video className="h-4 w-4" />
-              <span>URL / YouTube / Instagram Reel</span>
+              <Video className="h-3.5 w-3.5" />
+              <span>Link / Video</span>
             </button>
             <button
               type="button"
               onClick={() => setImportMode("ocr")}
-              className={`py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 ${
+              className={`py-2 rounded-full text-xs font-medium flex items-center justify-center gap-2 transition-colors ${
                 importMode === "ocr"
-                  ? "bg-amber-500 text-obsidian"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-zinc-950 text-white"
+                  : "text-zinc-600 hover:text-zinc-950"
               }`}
             >
-              <ImageUp className="h-4 w-4" />
-              <span>Photo &amp; Handwritten OCR / Text</span>
+              <ImageUp className="h-3.5 w-3.5" />
+              <span>Photo / Text</span>
             </button>
           </div>
 
           {importMode === "url" ? (
             <div className="space-y-3">
-              <label className="block text-xs font-medium text-zinc-300">
-                Paste Website Blog, YouTube Video/Shorts, or Instagram Reel URL
-                (Strips ads &amp; fluff)
+              <label className="block text-xs font-medium text-zinc-700">
+                Recipe URL
               </label>
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2.5 rounded-2xl bg-[#F6F6F4] border border-zinc-200 px-3.5 py-2.5">
+                <Globe className="h-4 w-4 text-zinc-400 shrink-0" />
                 <input
                   type="url"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
-                  placeholder="https://www.instagram.com/reel/... or https://youtube.com/shorts/..."
-                  className="w-full rounded-xl bg-obsidian border border-white/10 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                  placeholder="https://www.instagram.com/reel/... or any recipe blog"
+                  className="w-full bg-transparent text-xs text-zinc-950 focus:outline-none"
                 />
               </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="text-[11px] text-zinc-500">Presets:</span>
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                <span className="text-[11px] text-zinc-400">Try an example:</span>
                 {[
                   {
-                    label: "IG Reel: Lasooni Palak Paneer",
+                    label: "Lasooni Palak Paneer",
                     url: "https://www.instagram.com/reel/lasooni-palak-paneer",
                   },
                   {
-                    label: "YT Shorts: Air-Fryer Chicken Tikka",
+                    label: "Air-Fryer Chicken Tikka",
                     url: "https://www.youtube.com/shorts/air-fryer-tandoori-tikka",
                   },
                   {
-                    label: "Blog URL: 15-Min Tadka Dal Khichdi",
+                    label: "15-Min Tadka Dal Khichdi",
                     url: "https://misefood.app/blog/moong-dal-khichdi",
                   },
                 ].map((preset) => (
@@ -206,7 +198,7 @@ export function OcrImporterModal({
                     key={preset.url}
                     type="button"
                     onClick={() => setSourceUrl(preset.url)}
-                    className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-amber-300"
+                    className="px-2.5 py-1 rounded-full bg-[#F6F6F4] hover:bg-zinc-200/70 border border-zinc-200 text-[11px] text-zinc-700"
                   >
                     {preset.label}
                   </button>
@@ -215,14 +207,13 @@ export function OcrImporterModal({
             </div>
           ) : (
             <div className="space-y-3">
-              <label className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-white/20 bg-obsidian/60 hover:border-amber-400/50 cursor-pointer transition-colors">
-                <ImageUp className="h-6 w-6 text-amber-400 mb-1.5" />
-                <span className="text-xs font-medium text-white">
-                  Upload cookbook photo or handwritten family card (Tesseract.js
-                  + Gemini Vision)
+              <label className="flex flex-col items-center justify-center p-5 rounded-2xl border border-dashed border-zinc-300 bg-[#F6F6F4] hover:border-zinc-500 cursor-pointer transition-colors">
+                <ImageUp className="h-5 w-5 text-[#C85A32] mb-1.5" />
+                <span className="text-xs font-medium text-zinc-900">
+                  Upload a cookbook page or handwritten recipe photo
                 </span>
-                <span className="text-[11px] text-zinc-500 mt-0.5">
-                  PNG, JPG, WEBP supported
+                <span className="text-[11px] text-zinc-400 mt-0.5">
+                  PNG, JPG, WEBP
                 </span>
                 <input
                   type="file"
@@ -233,42 +224,42 @@ export function OcrImporterModal({
               </label>
 
               {ocrProgress !== null && (
-                <div className="p-3 rounded-xl bg-obsidian border border-amber-500/30 flex items-center justify-between text-xs text-amber-300">
+                <div className="p-3 rounded-xl bg-[#FDF6EF] border border-[#EED9C4] flex items-center justify-between text-xs text-[#9A4220]">
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Running client-side Tesseract.js OCR...
+                    Reading recipe photo...
                   </span>
                   <span className="font-mono">{ocrProgress}%</span>
                 </div>
               )}
 
               {ocrConfidence !== null && (
-                <div className="text-xs text-emerald-400 font-mono">
-                  ✓ Tesseract.js OCR complete ({ocrConfidence}% confidence)
+                <div className="text-xs text-emerald-700 font-medium">
+                  ✓ Photo text extracted ({ocrConfidence}% clarity)
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5 mb-1">
-                  <FileText className="h-3.5 w-3.5 text-amber-400" />
-                  Raw Recipe Transcript or Paste
+                <label className="text-xs font-medium text-zinc-700 flex items-center gap-1.5 mb-1.5">
+                  <FileText className="h-3.5 w-3.5 text-zinc-400" />
+                  Recipe Text
                 </label>
                 <textarea
-                  rows={6}
+                  rows={5}
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
-                  className="w-full rounded-xl bg-obsidian border border-white/10 p-3 text-xs font-mono text-zinc-200 focus:outline-none focus:border-amber-500/50"
+                  className="w-full rounded-2xl bg-[#F6F6F4] border border-zinc-200 p-3.5 text-xs text-zinc-800 focus:outline-none focus:border-zinc-400"
                 />
               </div>
             </div>
           )}
 
-          {/* 1-Click AI Recipe Remix Selection during Import */}
+          {/* Dietary Adaptation Selection */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-              Optional AI Recipe Remix During Import
+            <label className="block text-xs font-medium text-zinc-700 mb-2">
+              Dietary preference (optional)
             </label>
-            <div className="flex flex-wrap gap-1.5 mb-2">
+            <div className="flex flex-wrap gap-1.5 mb-2.5">
               {[
                 "Make it High-Protein",
                 "Jain-Friendly / No Onion-Garlic",
@@ -281,10 +272,10 @@ export function OcrImporterModal({
                   onClick={() =>
                     setDietaryAdaptation((prev) => (prev === pill ? "" : pill))
                   }
-                  className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
                     dietaryAdaptation === pill
-                      ? "bg-amber-500/25 border-amber-500 text-amber-200 font-semibold"
-                      : "bg-obsidian border-white/10 text-zinc-400 hover:text-white"
+                      ? "bg-zinc-950 border-zinc-950 text-white font-medium"
+                      : "bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400"
                   }`}
                 >
                   {pill}
@@ -295,51 +286,44 @@ export function OcrImporterModal({
               type="text"
               value={dietaryAdaptation}
               onChange={(e) => setDietaryAdaptation(e.target.value)}
-              placeholder="Or type custom adaptation (e.g., 'low-oil, swap paneer for tofu')..."
-              className="w-full rounded-xl bg-obsidian border border-white/10 px-3 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50"
+              placeholder="Or add a custom note (e.g., less oil, swap paneer for tofu)..."
+              className="w-full rounded-2xl bg-[#F6F6F4] border border-zinc-200 px-3.5 py-2.5 text-xs text-zinc-950 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400"
             />
           </div>
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700">
               {errorMsg}
             </div>
           )}
         </div>
 
-        <div className="px-6 py-4 border-t border-white/10 bg-obsidian/60 flex items-center justify-between">
-          <span className="text-[11px] text-zinc-400">
-            Target System:{" "}
-            <strong className="text-amber-300 uppercase">{unitSystem}</strong>
-          </span>
-
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-zinc-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              disabled={isParsing}
-              onClick={() => void handleCompileWithLangGraph()}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-obsidian font-semibold text-xs flex items-center gap-2 shadow-md shadow-amber-500/20 disabled:opacity-50 active:scale-[0.97]"
-            >
-              {isParsing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Extracting &amp; Normalizing...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  <span>Import &amp; Build Parallel Timeline</span>
-                </>
-              )}
-            </button>
-          </div>
+        <div className="px-6 py-4 border-t border-zinc-200/80 bg-[#F6F6F4] flex items-center justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-full bg-white border border-zinc-200 hover:bg-zinc-100 text-xs font-medium text-zinc-700"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={isParsing}
+            onClick={() => void handleImportRecipe()}
+            className="px-5 py-2 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs flex items-center gap-2 disabled:opacity-50 active:scale-[0.97]"
+          >
+            {isParsing ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>Importing...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Save Recipe</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

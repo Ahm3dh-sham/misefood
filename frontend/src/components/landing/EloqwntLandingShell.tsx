@@ -13,7 +13,6 @@ import {
   PackageCheck,
   Play,
   Plus,
-  Scale,
   ScanText,
   Search,
   Sparkles,
@@ -25,7 +24,6 @@ import type { ActiveTab } from "@/components/layout/AppShell";
 import {
   MiseFoodGlyph,
   MiseFoodLogo,
-  type LogoVariant,
 } from "@/components/brand/MiseFoodLogo";
 import {
   ParallaxShowcaseFrame,
@@ -51,6 +49,7 @@ interface EloqwntLandingShellProps {
   recipes: Recipe[];
   onSelectRecipe: (recipe: Recipe) => void;
   activeTimers: ActiveCookingTimer[];
+  onApplyConciergePrompt?: (prompt: string) => void;
   children: React.ReactNode;
 }
 
@@ -64,61 +63,46 @@ const CAPABILITY_ROWS: {
 }[] = [
   {
     number: "01",
-    title: "Universal URL, YouTube & Reel Importer",
-    subtitle: "Strips blog fluff & video transcripts into structured recipes",
-    badge: "Module 01",
+    title: "Save from Any Link, Video, or Cookbook Photo",
+    subtitle: "Turns reels, food blogs, and handwritten family cards into clean recipes",
+    badge: "Import",
     targetTab: "hub",
     openModal: true,
   },
   {
     number: "02",
-    title: "Handwritten & Cookbook Vision OCR",
-    subtitle: "Tesseract.js + Gemini 3.8 Flash multimodal family card parser",
-    badge: "Vision OCR",
+    title: "Indian Katori, Metric & US Cup Scaling",
+    subtitle: "Switch between 150ml katoris, grams, and cups with live ₹ and macro updates",
+    badge: "Precision",
     targetTab: "hub",
-    openModal: true,
   },
   {
     number: "03",
-    title: "Katori, Metric & US Imperial Converter",
-    subtitle: "150ml Indian katori scaling with live macro & ₹ recalculation",
-    badge: "Unit Engine",
+    title: "One-Click Dietary Adaptations",
+    subtitle: "Adapt any dish to High-Protein, Jain (No Onion-Garlic), Vegan, or Air-Fryer",
+    badge: "Adapt",
     targetTab: "hub",
   },
   {
     number: "04",
-    title: "1-Click AI Dietary & Technique Remix",
-    subtitle: "High-Protein, Jain (No Onion-Garlic), Vegan & Air-Fryer modes",
-    badge: "LangGraph",
-    targetTab: "hub",
-  },
-  {
-    number: "05",
-    title: "Multi-Slot Indian Thali & Macro Planner",
-    subtitle: "Rice + Dal + Sabji + Curd composite calendar & ₹ budget solver",
-    badge: "Module 02",
+    title: "Weekly Thali & Macro Meal Planner",
+    subtitle: "Balanced Rice + Dal + Sabji + Curd plates tailored to your protein and ₹ budget",
+    badge: "Plan",
     targetTab: "planner",
   },
   {
-    number: "06",
-    title: "Kinetic Loop Parallel Prep Timeline",
-    subtitle: "Interleaves 2–4 recipes into a unified active/passive Gantt DAG",
-    badge: "Module 03",
+    number: "05",
+    title: "Multi-Dish Parallel Cooking Timeline",
+    subtitle: "Interleaves active prep and passive simmering so 2–4 dishes finish hot together",
+    badge: "Timing",
     targetTab: "kinetic-prep",
   },
   {
-    number: "07",
-    title: "Hands-Free Voice AI Sous Chef",
-    subtitle: "Screen Wake-Lock, concurrent floating timers & Web Speech loop",
-    badge: "Module 04",
+    number: "06",
+    title: "Hands-Free Voice Chef & 10-Min Grocery Cart",
+    subtitle: "Keep your screen awake while cooking and order missing items on Instamart or Blinkit",
+    badge: "Kitchen Flow",
     targetTab: "sous-chef",
-  },
-  {
-    number: "08",
-    title: "Pantry Rescue, Quick-Commerce & Cookbooks",
-    subtitle: "pgvector leftover match + Instamart, Blinkit, Zepto & BigBasket",
-    badge: "Modules 05–07",
-    targetTab: "pantry",
   },
 ];
 
@@ -129,60 +113,60 @@ const FAQ_ITEMS: {
 }[] = [
   {
     number: "01",
-    question: "What does MiseFood do differently from a recipe app?",
+    question: "How does MiseFood help me cook faster on weeknights?",
     answer:
-      "Most recipe apps stop at saving bookmarks. MiseFood bridges the execution gap: it normalizes every ingredient into strict gram/katori schemas, schedules 2 to 4 dishes into a single parallel Gantt timeline so everything finishes hot together, and guides you hands-free via voice while you cook.",
+      "Most recipe apps only store bookmarks. MiseFood turns links or photos into structured ingredients, merges multiple dishes into a single step-by-step timeline so nothing gets cold, and guides you hands-free by voice while you cook.",
   },
   {
     number: "02",
-    question: "How does Indian Kitchen Metric (Katori) conversion work?",
+    question: "How does Indian Katori measurement conversion work?",
     answer:
-      "A standard Indian household katori holds 150 ml (approx. 150 g for dals, curries, curds, and diced paneer/vegetables). You can toggle instantaneously between Indian (katori/tbsp/pinch), Metric (g/ml), and US Imperial (oz/cup) while preserving exact calories, protein, and ₹ cost.",
+      "A standard household katori holds 150 ml (approx. 150 g for dals, curries, curds, and diced vegetables). You can switch between Katori, Metric (g/ml), and US Cups at any time while calories, protein, and ₹ cost scale automatically.",
   },
   {
     number: "03",
-    question: "How does the Kinetic Loop Parallel Meal Prep scheduler work?",
+    question: "How does Cook Together coordinate multiple dishes at once?",
     answer:
-      "When you select 2 to 4 recipes (for example Dal Tadka, Air-Fryer Paneer Tikka, and Jeera Rice), our LangGraph dependency scheduler identifies passive wait windows (marinating, pressure cooking, simmering) and slots active chopping and tadka tempering inside them — cutting total kitchen time by up to 38%.",
+      "When you select 2 to 4 dishes (for example Dal Tadka, Paneer Tikka, and Jeera Rice), MiseFood spots passive wait windows—like pressure-cooking or marinating—and schedules your chopping and tempering inside them, saving up to 38% of active kitchen time.",
   },
   {
     number: "04",
-    question: "Can I remix a recipe to be Jain-friendly or High-Protein in one click?",
+    question: "Can I adapt a recipe to be Jain-friendly or High-Protein?",
     answer:
-      "Yes. Inside the Recipe Studio, 1-click AI Remix pills transform any dish into High-Protein (+40% protein via paneer/soya/Greek curd), Jain-friendly (removing onion, garlic, and root tubers in favor of hing, ginger, and fennel), Vegan, or an Air-Fryer version (-65% oil).",
+      "Yes. On any recipe, use the one-click adaptation pills to boost protein (+40%), make it Jain-friendly (replacing onion and garlic with hing, ginger, and fennel), make it plant-based, or convert deep-frying to an air-fryer.",
   },
   {
     number: "05",
-    question: "How does Quick-Commerce cart export work for Indian households?",
+    question: "How do quick-commerce grocery links work?",
     answer:
-      "Our grocery engine aggregates and de-duplicates ingredients across your entire 7-day meal plan (merging 2 onions on Tuesday + 1.5 onions on Friday into 3.5 onions), groups them by supermarket aisle, and generates one-click search deep-links for Swiggy Instamart, Blinkit, Zepto, and BigBasket.",
+      "Your weekly meal plan combines duplicate ingredients across all 7 days, organizes them by aisle, and lets you open any item directly in Swiggy Instamart, Blinkit, Zepto, or BigBasket.",
   },
   {
     number: "06",
-    question: "Does Hands-Free Voice Sous Chef keep my phone screen awake?",
+    question: "Will my phone screen turn off while using Voice Chef?",
     answer:
-      "Yes. Voice Sous Chef engages the browser Screen Wake Lock API so your display never dims while your hands are covered in dough or masala, and listens continuously for commands like 'Next step', 'Repeat', 'How much cumin?', or 'Set a timer for 8 minutes'.",
+      "No. Voice Chef keeps your screen awake while you cook so you never have to touch your phone with messy hands, and listens for simple commands like 'Next step', 'Repeat', or 'Set a timer for 8 minutes'.",
   },
 ];
 
 const TESTIMONIALS = [
   {
     quote:
-      "“Cooking a 4-part North Indian thali on a Tuesday night used to take 75 minutes and three cold pans. Kinetic Loop interleaved the pressure cooker window with my air-fryer paneer — everything hit the table hot in 42 minutes.”",
+      "“Cooking a full North Indian dinner on a Tuesday night used to take 75 minutes and three cold pans. MiseFood overlapped the pressure-cooker window with my air-fryer paneer—everything hit the table hot in 42 minutes.”",
     author: "Ananya Krishnan",
-    role: "Product Lead & Home Chef, Bengaluru",
+    role: "Home Chef, Bengaluru",
   },
   {
     quote:
-      "“The 1-click Jain & High-Protein remix on imported Instagram Reels is magic. My parents get their no-onion-garlic dal while I hit 135g daily protein under ₹2,400 a week.”",
+      "“Adapting saved Instagram Reels to Jain and High-Protein in one click is a lifesaver. My parents get their no-onion-garlic dal while I hit 135g daily protein under ₹2,400 a week.”",
     author: "Rohan Mehta",
-    role: "Founder, Mumbai",
+    role: "Product Designer, Mumbai",
   },
   {
     quote:
-      "“Scanning my grandmother's handwritten masala card into normalized katori measurements and exporting the missing spices straight to Blinkit saved our Sunday family lunch.”",
+      "“Scanning my grandmother's handwritten masala card into katori measurements and sending the missing spices straight to Blinkit saved our Sunday family lunch.”",
     author: "Meera Nair",
-    role: "Culinary Creator, Kochi",
+    role: "Food Writer, Kochi",
   },
 ];
 
@@ -195,6 +179,7 @@ export function EloqwntLandingShell({
   recipes,
   onSelectRecipe,
   activeTimers,
+  onApplyConciergePrompt,
   children,
 }: EloqwntLandingShellProps) {
   const [cmdOpen, setCmdOpen] = useState(false);
@@ -202,16 +187,15 @@ export function EloqwntLandingShell({
   const [showreelPlaying, setShowreelPlaying] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
-  const [logoVariant, setLogoVariant] = useState<LogoVariant>("crown-katori");
 
-  // Interactive "Tell us about your next stage" AI Concierge state
+  // Interactive Meal Concierge state
   const [chefName, setChefName] = useState("");
   const [householdName, setHouseholdName] = useState("");
   const [macroTarget, setMacroTarget] = useState("2000 kcal • 130g Protein");
   const [cuisinePref, setCuisinePref] = useState("Indian Thali + Global");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([
-    "High-Protein Remix",
-    "Indian Thali Slots",
+    "High-Protein",
+    "Indian Thali",
   ]);
   const [selectedBudget, setSelectedBudget] = useState("₹1.5k – ₹2.5k");
   const [conciergePrompt, setConciergePrompt] = useState("");
@@ -225,7 +209,6 @@ export function EloqwntLandingShell({
   });
   const reduceMotion = useReducedMotion();
 
-  // Emil Kowalski rule: Never animate keyboard-initiated command palette toggles
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -260,9 +243,35 @@ export function EloqwntLandingShell({
   const handleConciergeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setConciergeSubmitted(true);
+
+    // Build a natural prompt from the user's selections so the planner solves their exact inputs
+    const budgetNumeric =
+      selectedBudget === "< ₹1.5k"
+        ? "₹1500"
+        : selectedBudget === "₹1.5k – ₹2.5k"
+          ? "₹2400"
+          : selectedBudget === "₹2.5k – ₹4k"
+            ? "₹3500"
+            : "₹4500";
+
+    const builtPrompt = [
+      `Plan a 7-day ${cuisinePref} menu`,
+      macroTarget ? `targeting ${macroTarget}` : "",
+      `under ${budgetNumeric} weekly budget`,
+      selectedInterests.length > 0
+        ? `with ${selectedInterests.join(", ")}`
+        : "",
+      conciergePrompt.trim() ? `(${conciergePrompt.trim()})` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    onApplyConciergePrompt?.(builtPrompt);
+
     setTimeout(() => {
       jumpToStudioTab("planner");
-    }, 350);
+      setConciergeSubmitted(false);
+    }, 300);
   };
 
   const filteredRecipes = recipes.filter(
@@ -277,43 +286,36 @@ export function EloqwntLandingShell({
   const studioTabs: {
     id: ActiveTab;
     label: string;
-    shortNum: string;
     icon: React.ReactNode;
   }[] = [
     {
       id: "hub",
-      shortNum: "01",
-      label: "Recipe Studio & AI Remix",
+      label: "Recipes",
       icon: <Flame className="h-3.5 w-3.5" />,
     },
     {
       id: "planner",
-      shortNum: "02",
-      label: "Thali Planner & Quick Cart",
+      label: "Meal Plan",
       icon: <CalendarRange className="h-3.5 w-3.5" />,
     },
     {
       id: "kinetic-prep",
-      shortNum: "03",
-      label: "Kinetic Prep DAG",
+      label: "Cook Together",
       icon: <GitMerge className="h-3.5 w-3.5" />,
     },
     {
       id: "sous-chef",
-      shortNum: "04",
-      label: "Voice Sous Chef",
+      label: "Voice Chef",
       icon: <Mic className="h-3.5 w-3.5" />,
     },
     {
       id: "pantry",
-      shortNum: "05",
-      label: "Pantry & Barcode Rescue",
+      label: "Pantry",
       icon: <PackageCheck className="h-3.5 w-3.5" />,
     },
     {
       id: "social",
-      shortNum: "07",
-      label: "Cookbooks & Communities",
+      label: "Cookbooks",
       icon: <BookOpen className="h-3.5 w-3.5" />,
     },
   ];
@@ -323,91 +325,54 @@ export function EloqwntLandingShell({
       id="top"
       className="min-h-screen bg-[#ECEEF0] text-zinc-950 selection:bg-zinc-950 selection:text-white"
     >
-      {/* Minimalist Architectural Sticky Top Bar on #ECEEF0 */}
-      <header className="sticky top-0 z-40 bg-[#ECEEF0]/85 backdrop-blur-xl border-b border-zinc-300/60">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-5">
-            <a
-              href="#top"
-              className="flex items-center gap-2.5 group"
-            >
+      {/* Minimalist Sticky Navigation Header */}
+      <header className="sticky top-0 z-40 bg-[#ECEEF0]/90 backdrop-blur-xl border-b border-zinc-200/80">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-6">
+            <a href="#top" className="flex items-center gap-2.5 group shrink-0">
               <MiseFoodLogo
-                variant={logoVariant}
+                variant="crown-katori"
                 size={36}
                 showWordmark={true}
                 theme="light"
               />
             </a>
 
-            {/* Live Warm Logo Concept Switcher (6 Bowl + Chef Cap Marks) */}
-            <div
-              title="Switch Bowl + Chef Cap Logo Concept"
-              className="hidden xl:flex items-center gap-1 bg-[#F7F3EC] px-2 py-1 rounded-full border border-[#E2D6C5]"
-            >
-              {(
-                [
-                  { id: "crown-katori", label: "1. Toque Katori" },
-                  { id: "steam-negative", label: "2. Steam Toque" },
-                  { id: "monoline-crest", label: "3. Monoline" },
-                  { id: "m-monogram", label: "4. M-Bowl" },
-                  { id: "seal-emblem", label: "5. Seal" },
-                  { id: "horizon-duet", label: "6. Horizon" },
-                ] as const
-              ).map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => setLogoVariant(v.id)}
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition-colors ${
-                    logoVariant === v.id
-                      ? "bg-[#C85A32] text-[#FAF5EE]"
-                      : "text-[#6E5A4F] hover:text-[#1E1916]"
-                  }`}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-
-            <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-zinc-600">
-              <a
-                href="#selected-work"
-                className="hover:text-zinc-950 transition-colors"
-              >
-                Selected Modules
-              </a>
-              <a
-                href="#capabilities"
-                className="hover:text-zinc-950 transition-colors"
-              >
-                Capabilities (08)
-              </a>
-              <a
-                href="#live-studio"
-                className="hover:text-zinc-950 transition-colors flex items-center gap-1.5 text-zinc-950 font-semibold"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                Live Studio
-              </a>
-              <a href="#faq" className="hover:text-zinc-950 transition-colors">
-                FAQ
-              </a>
-              <a
-                href="#concierge"
-                className="hover:text-zinc-950 transition-colors"
-              >
-                AI Concierge
-              </a>
+            {/* Primary Navigation Tabs right in the header for effortless 1-click access */}
+            <nav className="hidden lg:flex items-center gap-1 bg-white/80 p-1 rounded-full border border-zinc-200/80">
+              {studioTabs.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => jumpToStudioTab(item.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all duration-150 active:scale-[0.97] ${
+                      isActive
+                        ? "bg-zinc-950 text-white shadow-sm"
+                        : "text-zinc-600 hover:text-zinc-950"
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                    {item.id === "sous-chef" && activeTimers.length > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-400 flex items-center gap-0.5">
+                        <Timer className="h-2.5 w-2.5" />
+                        {activeTimers.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Global Unit Switcher Pill (Indian Katori / Metric / US) */}
-            <div className="hidden sm:flex items-center bg-white/90 p-1 rounded-full border border-zinc-200/90 text-[11px] shadow-sm">
-              <Scale className="h-3 w-3 text-zinc-500 ml-2 mr-1" />
+          <div className="flex items-center gap-2">
+            {/* Compact Unit System Pill */}
+            <div className="hidden sm:flex items-center bg-white/90 p-1 rounded-full border border-zinc-200/80 text-[11px]">
               {(
                 [
-                  { id: "indian", label: "Katori (IN)" },
+                  { id: "indian", label: "Katori" },
                   { id: "metric", label: "Metric" },
                   { id: "imperial", label: "US" },
                 ] as const
@@ -430,11 +395,11 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={() => setCmdOpen(true)}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200/90 text-xs text-zinc-600 hover:text-zinc-950 shadow-sm active:scale-[0.97]"
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200/80 text-xs text-zinc-600 hover:text-zinc-950 active:scale-[0.97]"
             >
               <Search className="h-3.5 w-3.5" />
               <span>Search</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-100 text-[10px] font-mono text-zinc-600 flex items-center gap-0.5">
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-100 text-[10px] font-mono text-zinc-500 flex items-center gap-0.5">
                 <Command className="h-2.5 w-2.5" />K
               </kbd>
             </button>
@@ -442,34 +407,90 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={onOpenOcrModal}
-              className="px-3.5 py-2 rounded-full bg-white hover:bg-zinc-50 text-zinc-950 border border-zinc-300/90 text-xs font-medium flex items-center gap-1.5 shadow-sm transition-transform duration-150 ease-emil-out active:scale-[0.97]"
+              className="px-4 py-2 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-medium flex items-center gap-1.5 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
             >
               <ScanText className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Import Recipe</span>
-              <span className="sm:hidden">Import</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => jumpToStudioTab("hub")}
-              className="px-4 sm:px-5 py-2 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-medium flex items-center gap-2.5 shadow-sm transition-transform duration-150 ease-emil-out active:scale-[0.97]"
-            >
-              <span>Open Studio</span>
-              <span className="h-2 w-2 rounded-full bg-white" />
+              <span>Import Recipe</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 pt-4 pb-16 space-y-6">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 pt-5 pb-16 space-y-8">
         {/* =====================================================================
-            SHEET 1 (00:00): HERO & SHOWREEL FLOATING WHITE ISLAND SHEET
+            PRIMARY CULINARY WORKSPACE FIRST — Clean White Floating Island Sheet
            ===================================================================== */}
-        <section className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <section
+          id="live-studio"
+          ref={studioSectionRef as React.RefObject<HTMLElement>}
+          className="rounded-[32px] sm:rounded-[40px] bg-white p-5 sm:p-8 lg:p-10 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-6 scroll-mt-20"
+        >
+          {/* Mobile / Tablet Navigation Bar + Workspace Context */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-200/80">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+              {studioTabs.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onSelectTab(item.id)}
+                    className={`px-4 py-2 rounded-full text-xs font-medium flex items-center gap-2 shrink-0 transition-all duration-150 active:scale-[0.97] ${
+                      isActive
+                        ? "bg-zinc-950 text-white shadow-sm"
+                        : "bg-[#F6F6F4] text-zinc-600 hover:text-zinc-950 hover:bg-zinc-200/60"
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                    {item.id === "sous-chef" && activeTimers.length > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 flex items-center gap-1">
+                        <Timer className="h-2.5 w-2.5" />
+                        {activeTimers.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="hidden sm:flex items-center gap-4 text-xs text-zinc-500">
+              <a
+                href="#story"
+                className="hover:text-zinc-950 transition-colors"
+              >
+                How It Works
+              </a>
+              <a
+                href="#faq"
+                className="hover:text-zinc-950 transition-colors"
+              >
+                FAQ
+              </a>
+              <a
+                href="#concierge"
+                className="hover:text-zinc-950 transition-colors"
+              >
+                Custom Plan
+              </a>
+            </div>
+          </div>
+
+          {/* Active Culinary Module Content */}
+          <div>{children}</div>
+        </section>
+
+        {/* =====================================================================
+            EDITORIAL STORY & INTERACTIVE KITCHEN TOUR SHEET
+           ===================================================================== */}
+        <section
+          id="story"
+          className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)] scroll-mt-20"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Showreel Container matching 00:00 */}
+            {/* Left Column: Interactive Kitchen Tour */}
             <div className="lg:col-span-5">
-              <div className="rounded-[26px] bg-[#F2F3F5] p-3.5 sm:p-4 space-y-3">
+              <div className="rounded-[26px] bg-[#F6F6F4] p-3.5 sm:p-4 space-y-3 border border-zinc-200/60">
                 <div
                   onClick={() => setShowreelPlaying((prev) => !prev)}
                   role="button"
@@ -478,15 +499,14 @@ export function EloqwntLandingShell({
                     if (e.key === "Enter" || e.key === " ")
                       setShowreelPlaying((prev) => !prev);
                   }}
-                  className="group relative rounded-[18px] bg-[#07080A] aspect-[16/10] overflow-hidden flex items-center justify-center cursor-pointer"
+                  className="group relative rounded-[18px] bg-[#141210] aspect-[16/10] overflow-hidden flex items-center justify-center cursor-pointer"
                 >
-                  {/* Subtle dark topographic/culinary ambient glow */}
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_30%,rgba(245,158,11,0.18),transparent_55%),radial-gradient(circle_at_75%_75%,rgba(244,63,94,0.16),transparent_55%)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_30%,rgba(200,90,50,0.22),transparent_55%),radial-gradient(circle_at_75%_75%,rgba(224,159,62,0.18),transparent_55%)]" />
 
                   {!showreelPlaying ? (
                     <>
-                      <span className="text-base sm:text-lg font-medium tracking-tight text-white/80 select-none">
-                        Hi, we&apos;re misefood.
+                      <span className="text-base sm:text-lg font-medium tracking-tight text-white/90 select-none">
+                        See how MiseFood works
                       </span>
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-2xl transition-transform duration-200 ease-emil-out group-hover:scale-105 active:scale-95">
@@ -494,7 +514,7 @@ export function EloqwntLandingShell({
                         </div>
                       </div>
                       <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-mono text-white/80">
-                        01:24 • 4K Tour
+                        01:24 • Kitchen Walkthrough
                       </div>
                     </>
                   ) : (
@@ -502,17 +522,17 @@ export function EloqwntLandingShell({
                       <div className="flex items-center justify-between text-[11px] font-mono text-amber-300">
                         <span className="flex items-center gap-1.5">
                           <Volume2 className="h-3.5 w-3.5 animate-pulse" />
-                          LIVE AI SOUS CHEF TOUR
+                          VOICE CHEF WALKTHROUGH
                         </span>
                         <span className="text-zinc-400">Click to pause</span>
                       </div>
                       <div className="space-y-2 my-auto">
                         <p className="text-xs font-mono uppercase tracking-wider text-emerald-400">
-                          Step 2 of 4 • Active + Passive Overlap
+                          Step 2 of 4 • Smart Overlap
                         </p>
                         <p className="text-sm sm:text-base font-medium leading-snug">
-                          “While Toor Dal pressure-cooks for 12 minutes, air-fry
-                          your marinated Malai Paneer cubes at 200°C.”
+                          “While the Toor Dal pressure-cooks for 12 minutes,
+                          air-fry your marinated Malai Paneer cubes at 200°C.”
                         </p>
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-white/10 text-[11px]">
@@ -527,7 +547,7 @@ export function EloqwntLandingShell({
                           }}
                           className="px-3 py-1 rounded-full bg-white text-zinc-950 font-semibold text-[11px]"
                         >
-                          Enter Voice Mode →
+                          Try Voice Chef →
                         </button>
                       </div>
                     </div>
@@ -536,19 +556,19 @@ export function EloqwntLandingShell({
 
                 <div className="flex items-center justify-between px-1.5 pt-1 pb-0.5">
                   <span className="text-sm font-medium text-zinc-950">
-                    MiseFood Showreel
+                    Kitchen Flow Preview
                   </span>
-                  <span className="text-xs font-mono text-zinc-500">
-                    Mise + Samsung Food Architecture
+                  <span className="text-xs text-zinc-500">
+                    Save • Scale • Cook Together
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Editorial Headline, Dual Paragraphs & Black Pill CTA matching 00:00 */}
+            {/* Right Column: Editorial Headline & Clear Value Proposition */}
             <div className="lg:col-span-7 lg:pl-6 space-y-6">
               <ScrollHeadlineReveal
-                as="h1"
+                as="h2"
                 className="text-3xl sm:text-4xl lg:text-[44px]"
                 lines={[
                   "Every home kitchen hits the",
@@ -559,39 +579,36 @@ export function EloqwntLandingShell({
 
               <div className="space-y-4 text-sm sm:text-[15px] text-zinc-600 leading-[1.68] max-w-2xl">
                 <p>
-                  MiseFood is an AI culinary platform for Indian and global
-                  households at every turning point — weeknight tiffins,
-                  high-protein macro targets, Sunday family thalis, or zero-waste
-                  fridge rescues. We&apos;ve seen what happens when saved
-                  Instagram Reels, cookbook photos, and grocery lists live in
-                  silos: masalas burn while rice cools, budgets drift, and
-                  ingredients expire.
+                  MiseFood is built for everyday home cooking—whether you are
+                  preparing weeknight tiffins, hitting daily protein goals,
+                  cooking a Sunday family thali, or turning fridge leftovers
+                  into dinner.
                 </p>
                 <p>
-                  We close that gap by turning raw links, handwritten notes, and
-                  pantry stock into synchronized parallel timelines — through
-                  katori-native precision, LangGraph scheduling, pgvector taste
-                  matching, and 10-minute quick-commerce carts.
+                  Bring recipes from any link or handwritten card, switch
+                  effortlessly between Indian katoris and grams, coordinate
+                  multiple dishes so they finish hot at the same minute, and
+                  cook hands-free with voice guidance.
                 </p>
               </div>
 
               <div className="pt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => jumpToStudioTab("hub")}
+                  onClick={() => jumpToStudioTab("kinetic-prep")}
                   className="px-6 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-sm font-medium inline-flex items-center gap-3 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
                 >
-                  <span>Explore Live Studio</span>
-                  <span className="h-2.5 w-2.5 rounded-full bg-white" />
+                  <span>Cook Multiple Dishes Together</span>
+                  <span className="h-2 w-2 rounded-full bg-white" />
                 </button>
 
                 <button
                   type="button"
                   onClick={onOpenOcrModal}
-                  className="px-5 py-3.5 rounded-full bg-[#F2F3F5] hover:bg-zinc-200/80 text-zinc-900 text-sm font-medium inline-flex items-center gap-2 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
+                  className="px-5 py-3.5 rounded-full bg-[#F6F6F4] hover:bg-zinc-200/80 text-zinc-900 text-sm font-medium inline-flex items-center gap-2 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
                 >
                   <ScanText className="h-4 w-4" />
-                  <span>Import URL / Reel / OCR</span>
+                  <span>Import from Link or Photo</span>
                 </button>
               </div>
             </div>
@@ -599,76 +616,74 @@ export function EloqwntLandingShell({
         </section>
 
         {/* =====================================================================
-            SECTION HEADER 1 ON STONE CANVAS (00:00 - 00:01): "• Selected Work"
+            SECTION HEADER: CORE FEATURES
            ===================================================================== */}
         <div
           id="selected-work"
-          className="pt-12 pb-6 px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+          className="pt-10 pb-4 px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
         >
           <div className="lg:col-span-5 flex items-center gap-2.5 text-sm font-medium text-zinc-900 pt-2">
             <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-            <span>Selected Work &amp; Core Engines</span>
+            <span>Designed for Home Cooks</span>
           </div>
           <div className="lg:col-span-7">
             <ScrollHeadlineReveal
               className="text-3xl sm:text-4xl lg:text-[42px]"
               lines={[
-                "Seven culinary engines that closed the",
-                "execution gap and what changed.",
+                "Four tools that bring calm and",
+                "precision to your daily cooking.",
               ]}
             />
           </div>
         </div>
 
         {/* =====================================================================
-            SHEET 2 (00:01 - 00:05): ALTERNATING 2-COLUMN SHOWCASES WHITE ISLAND
+            SHEET 2: 4 ALTERNATING CULINARY SHOWCASES
            ===================================================================== */}
         <section className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-20 lg:space-y-28">
-          {/* CASE 1 (00:01 - Vertus AI layout): Text Left, Visual Right */}
+          {/* SHOWCASE 1: Recipe Import & Adaptation */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
               <div className="space-y-5">
-                <div className="flex items-center gap-2 text-xs font-medium text-zinc-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-                  <span>Universal Importer &amp; OCR, IN / Global</span>
+                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#C85A32]" />
+                  <span>Recipe Import &amp; Scaling</span>
                 </div>
 
                 <h3 className="text-3xl sm:text-5xl font-normal tracking-[-0.03em] text-zinc-950">
-                  Recipe Studio AI
+                  Import &amp; Adapt
                 </h3>
 
                 <p className="text-sm sm:text-[15px] text-zinc-600 leading-[1.65]">
-                  Multi-modal extraction engine operating at household scale —
-                  stripping blog clutter, YouTube Shorts transcripts, Instagram
-                  Reels, and handwritten family cards into strict normalized
-                  schemas with 1-click Jain, High-Protein, Vegan, and Air-Fryer
-                  remixes.
+                  Save recipes from blogs, YouTube videos, Instagram Reels, or
+                  photos of handwritten family cards. Automatically convert
+                  measurements into Indian katoris or grams and adapt any dish
+                  to Jain, High-Protein, Vegan, or Air-Fryer in one click.
                 </p>
 
-                {/* 3 Metric Callouts matching "$1Bln | Top 1 | 51.15%" */}
                 <div className="grid grid-cols-3 gap-4 pt-3">
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
                       150ml
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      KATORI NATIVE CONVERSION
+                      STANDARD KATORI SCALE
                     </p>
                   </div>
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
-                      Top 1
+                      4 Modes
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      GEMINI 3.8 FLASH OCR
+                      1-CLICK DIET ADAPTATION
                     </p>
                   </div>
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
-                      65.0%
+                      -65%
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      OIL SAVED IN AIR-FRY REMIX
+                      OIL IN AIR-FRYER MODE
                     </p>
                   </div>
                 </div>
@@ -680,7 +695,7 @@ export function EloqwntLandingShell({
                   onClick={() => jumpToStudioTab("hub")}
                   className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-950 hover:text-zinc-600 transition-colors"
                 >
-                  <span>Explore</span>
+                  <span>Open Recipes</span>
                   <span className="transition-transform duration-200 ease-emil-out group-hover:translate-x-1">
                     →
                   </span>
@@ -697,7 +712,7 @@ export function EloqwntLandingShell({
             </div>
           </div>
 
-          {/* CASE 2 (00:03 - TitanX layout): Visual Left, Text Right */}
+          {/* SHOWCASE 2: Multi-Dish Parallel Cooking */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-7 order-2 lg:order-1">
               <ParallaxShowcaseFrame>
@@ -709,38 +724,37 @@ export function EloqwntLandingShell({
 
             <div className="lg:col-span-5 order-1 lg:order-2 flex flex-col justify-between space-y-8 lg:pl-4">
               <div className="space-y-5">
-                <div className="flex items-center gap-2 text-xs font-medium text-zinc-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-                  <span>Kinetic Loop Engine, Parallel DAG</span>
+                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#C85A32]" />
+                  <span>Multi-Dish Timing</span>
                 </div>
 
                 <h3 className="text-3xl sm:text-5xl font-normal tracking-[-0.03em] text-zinc-950">
-                  Kinetic PrepX
+                  Cook Together
                 </h3>
 
                 <p className="text-sm sm:text-[15px] text-zinc-600 leading-[1.65]">
-                  Kinetic PrepX — Multi-recipe dependency scheduler delivering
-                  38% faster meal prep with its Active/Passive Overlap Engine,
-                  merging 2 to 4 dishes into a single interleaved Gantt timeline
-                  so every bowl finishes hot at the exact same minute.
+                  Cooking Dal, Paneer, and Rice at the same time? Select 2 to 4
+                  recipes and MiseFood weaves them into one coordinated
+                  timeline—slotting chopping and tempering inside passive
+                  simmering windows so everything finishes hot together.
                 </p>
 
-                {/* 3 Metric Callouts matching "$27M | 250%+ | 1.5k+" */}
                 <div className="grid grid-cols-3 gap-4 pt-3">
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
                       42m
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      3-DISH MERGED RUNTIME
+                      3-DISH COMBINED TIME
                     </p>
                   </div>
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
-                      250%+
+                      38%
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      PASSIVE WINDOW UTILIZATION
+                      FASTER THAN SEQUENTIAL
                     </p>
                   </div>
                   <div>
@@ -748,7 +762,7 @@ export function EloqwntLandingShell({
                       4 Dishes
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      SIMULTANEOUS HOT FINISH
+                      READY AT ONCE
                     </p>
                   </div>
                 </div>
@@ -760,7 +774,7 @@ export function EloqwntLandingShell({
                   onClick={() => jumpToStudioTab("kinetic-prep")}
                   className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-950 hover:text-zinc-600 transition-colors"
                 >
-                  <span>Explore</span>
+                  <span>Try Cook Together</span>
                   <span className="transition-transform duration-200 ease-emil-out group-hover:translate-x-1">
                     →
                   </span>
@@ -769,35 +783,33 @@ export function EloqwntLandingShell({
             </div>
           </div>
 
-          {/* CASE 3 (00:04 - Metapic layout): Text Left, Visual Right */}
+          {/* SHOWCASE 3: Weekly Thali & Macro Planner */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
               <div className="space-y-5">
-                <div className="flex items-center gap-2 text-xs font-medium text-zinc-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-                  <span>Indian Plate &amp; Macro Logic, ₹ Budget</span>
+                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#C85A32]" />
+                  <span>Weekly Nutrition &amp; Budget</span>
                 </div>
 
                 <h3 className="text-3xl sm:text-5xl font-normal tracking-[-0.03em] text-zinc-950">
-                  ThaliMacro
+                  Thali Planner
                 </h3>
 
                 <p className="text-sm sm:text-[15px] text-zinc-600 leading-[1.65]">
-                  ThaliMacro is our composite-slot weekly meal planner —
-                  supporting full 4-component Indian Thalis (Rice/Roti +
-                  Dal/Gravy + Sabji + Curd) alongside Western single-dish bowls,
-                  solved from natural-language protein, calorie, and ₹ budget
-                  constraints.
+                  Plan a complete 7-day menu around full Indian thalis
+                  (Rice/Roti + Dal + Sabji + Curd) or quick single-bowl meals,
+                  balanced automatically for your daily protein target and
+                  weekly grocery budget.
                 </p>
 
-                {/* 3 Metric Callouts matching "50%+ | 100k+ | 4:1" */}
                 <div className="grid grid-cols-3 gap-4 pt-3">
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
                       130g+
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      DAILY PROTEIN TARGETING
+                      DAILY PROTEIN GOAL
                     </p>
                   </div>
                   <div>
@@ -805,15 +817,15 @@ export function EloqwntLandingShell({
                       ₹2.5k
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      WEEKLY BUDGET CAP SOLVER
+                      WEEKLY BUDGET TARGET
                     </p>
                   </div>
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
-                      4:1
+                      4-Part
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      COMPOSITE THALI SLOTS
+                      COMPLETE THALI PLATES
                     </p>
                   </div>
                 </div>
@@ -825,7 +837,7 @@ export function EloqwntLandingShell({
                   onClick={() => jumpToStudioTab("planner")}
                   className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-950 hover:text-zinc-600 transition-colors"
                 >
-                  <span>Explore</span>
+                  <span>Open Meal Plan</span>
                   <span className="transition-transform duration-200 ease-emil-out group-hover:translate-x-1">
                     →
                   </span>
@@ -842,7 +854,7 @@ export function EloqwntLandingShell({
             </div>
           </div>
 
-          {/* CASE 4 (00:05 - AlphaLedger layout): Visual Left, Text Right */}
+          {/* SHOWCASE 4: Pantry & 10-Min Grocery Cart */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-7 order-2 lg:order-1">
               <ParallaxShowcaseFrame>
@@ -854,31 +866,28 @@ export function EloqwntLandingShell({
 
             <div className="lg:col-span-5 order-1 lg:order-2 flex flex-col justify-between space-y-8 lg:pl-4">
               <div className="space-y-5">
-                <div className="flex items-center gap-2 text-xs font-medium text-zinc-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-                  <span>Quick-Commerce &amp; Vector Pantry, IN</span>
+                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#C85A32]" />
+                  <span>Zero-Waste Kitchen &amp; Groceries</span>
                 </div>
 
                 <h3 className="text-3xl sm:text-5xl font-normal tracking-[-0.03em] text-zinc-950">
-                  MiseLedger
+                  Pantry &amp; Cart
                 </h3>
 
                 <p className="text-sm sm:text-[15px] text-zinc-600 leading-[1.65]">
-                  768-dimensional pgvector pantry engine that matches your
-                  fridge leftovers against saved recipes, depletes quantities on
-                  &ldquo;Mark Cooked&rdquo;, and exports de-duplicated supermarket
-                  aisle carts to Swiggy Instamart, Blinkit, Zepto, and
-                  BigBasket.
+                  Keep track of what is in your fridge, prioritize ingredients
+                  expiring soon, and export combined grocery lists straight to
+                  Swiggy Instamart, Blinkit, Zepto, or BigBasket.
                 </p>
 
-                {/* 3 Metric Callouts matching "$950M+ | 1.9K | $98.7M" */}
                 <div className="grid grid-cols-3 gap-4 pt-3">
                   <div>
                     <p className="text-2xl sm:text-4xl font-normal tracking-tight text-zinc-950">
-                      768d
+                      Zero
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      PGVECTOR SIMILARITY
+                      FRIDGE WASTE GOAL
                     </p>
                   </div>
                   <div>
@@ -886,7 +895,7 @@ export function EloqwntLandingShell({
                       4 Apps
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      10-MIN CART DEEP-LINKS
+                      QUICK-COMMERCE LINKS
                     </p>
                   </div>
                   <div>
@@ -894,7 +903,7 @@ export function EloqwntLandingShell({
                       ₹660
                     </p>
                     <p className="text-[10px] font-mono uppercase tracking-[0.06em] text-zinc-400 mt-1.5 leading-snug">
-                      WEEKLY LEFTOVER RESCUE
+                      AVG WEEKLY SAVINGS
                     </p>
                   </div>
                 </div>
@@ -906,7 +915,7 @@ export function EloqwntLandingShell({
                   onClick={() => jumpToStudioTab("pantry")}
                   className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-950 hover:text-zinc-600 transition-colors"
                 >
-                  <span>Explore</span>
+                  <span>Check My Pantry</span>
                   <span className="transition-transform duration-200 ease-emil-out group-hover:translate-x-1">
                     →
                   </span>
@@ -914,45 +923,15 @@ export function EloqwntLandingShell({
               </div>
             </div>
           </div>
-
-          {/* Bottom Centered Pill CTA matching "All projects" at 00:05 */}
-          <div className="pt-4 flex justify-center">
-            <button
-              type="button"
-              onClick={() => jumpToStudioTab("hub")}
-              className="px-8 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-sm font-medium transition-transform duration-150 ease-emil-out active:scale-[0.97]"
-            >
-              All 7 Interactive Modules
-            </button>
-          </div>
         </section>
 
         {/* =====================================================================
-            SECTION HEADER 2 ON STONE CANVAS (00:05): "• Who we work with"
+            SHEET 3: NUMBERED 01-06 CAPABILITIES OVERVIEW
            ===================================================================== */}
-        <div
+        <section
           id="capabilities"
-          className="pt-12 pb-6 px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+          className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
         >
-          <div className="lg:col-span-5 flex items-center gap-2.5 text-sm font-medium text-zinc-900 pt-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-            <span>Who we cook with &amp; Capabilities</span>
-          </div>
-          <div className="lg:col-span-7">
-            <ScrollHeadlineReveal
-              className="text-3xl sm:text-4xl lg:text-[42px]"
-              lines={[
-                "We work with ambitious home kitchens,",
-                "fitness planners, and culinary creators.",
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* =====================================================================
-            SHEET 3 (00:06 - 00:07): NUMBERED 01-08 SCROLL-STAGGER SERVICES LIST
-           ===================================================================== */}
-        <section className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="divide-y divide-transparent">
             {CAPABILITY_ROWS.map((row, index) => (
               <ScrollServiceRow
@@ -968,94 +947,16 @@ export function EloqwntLandingShell({
               />
             ))}
           </div>
-
-          <div className="pt-10 flex justify-center">
-            <button
-              type="button"
-              onClick={() => jumpToStudioTab("sous-chef")}
-              className="px-8 py-3.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-sm font-medium transition-transform duration-150 ease-emil-out active:scale-[0.97]"
-            >
-              Launch Hands-Free Voice Sous Chef
-            </button>
-          </div>
         </section>
 
         {/* =====================================================================
-            LIVE INTERACTIVE 7-MODULE WORKSPACE SHEET (#live-studio)
-           ===================================================================== */}
-        <div
-          id="live-studio"
-          ref={studioSectionRef as React.RefObject<HTMLDivElement>}
-          className="pt-12 pb-4 px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start scroll-mt-20"
-        >
-          <div className="lg:col-span-5 flex items-center gap-2.5 text-sm font-medium text-zinc-900 pt-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
-            <span>Interactive Culinary Workspace</span>
-          </div>
-          <div className="lg:col-span-7">
-            <ScrollHeadlineReveal
-              className="text-3xl sm:text-4xl lg:text-[42px]"
-              lines={[
-                "Switch between all 7 live AI modules",
-                "without leaving your kitchen flow.",
-              ]}
-            />
-          </div>
-        </div>
-
-        <section className="rounded-[32px] sm:rounded-[40px] bg-[#0C0D0E] text-parchment p-4 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.12)] border border-zinc-900/80 space-y-6">
-          {/* Studio Top Switcher Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-              {studioTabs.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => onSelectTab(item.id)}
-                  className={`px-3.5 py-2 rounded-full text-xs font-medium flex items-center gap-2 shrink-0 transition-all duration-150 active:scale-[0.97] ${
-                    activeTab === item.id
-                      ? "bg-white text-zinc-950 font-semibold shadow-sm"
-                      : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  <span className="font-mono text-[10px] opacity-60">
-                    {item.shortNum}
-                  </span>
-                  {item.icon}
-                  <span>{item.label}</span>
-                  {item.id === "sous-chef" && activeTimers.length > 0 && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                      <Timer className="h-2.5 w-2.5" />
-                      {activeTimers.length}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={onOpenOcrModal}
-              className="px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs flex items-center gap-2 transition-transform duration-150 ease-emil-out active:scale-[0.97]"
-            >
-              <ScanText className="h-3.5 w-3.5" />
-              <span>Import URL / YT / Reel / OCR</span>
-            </button>
-          </div>
-
-          {/* Live Module Canvas */}
-          <div>{children}</div>
-        </section>
-
-        {/* =====================================================================
-            SHEET 4 (00:07 - 00:08): NUMBERED FAQ ACCORDION ISLAND SHEET
+            SHEET 4: FAQ ACCORDION ISLAND SHEET
            ===================================================================== */}
         <section
           id="faq"
-          className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mt-10"
+          className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)] scroll-mt-20"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Left Sticky FAQ Header matching 00:07 */}
             <div className="lg:col-span-5 space-y-6">
               <div className="flex items-center gap-2.5 text-sm font-medium text-zinc-900">
                 <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
@@ -1066,13 +967,11 @@ export function EloqwntLandingShell({
                 lines={["Frequently", "Asked Questions"]}
               />
               <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
-                Everything you need to know about katori normalization, parallel
-                meal prep scheduling, voice wake-lock, and quick-commerce cart
-                exports.
+                Common questions about katori measurements, cooking multiple
+                dishes together, voice guidance, and grocery delivery links.
               </p>
             </div>
 
-            {/* Right Numbered 01-06 Accordion Rows matching 00:07 - 00:08 */}
             <div className="lg:col-span-7 divide-y divide-zinc-200">
               {FAQ_ITEMS.map((item, idx) => {
                 const isOpen = openFaqIndex === idx;
@@ -1098,7 +997,7 @@ export function EloqwntLandingShell({
                         className={`h-10 w-10 sm:h-11 sm:w-11 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 ease-emil-out ${
                           isOpen
                             ? "bg-zinc-950 text-white rotate-45"
-                            : "bg-[#F2F3F5] text-zinc-900 group-hover:bg-zinc-200"
+                            : "bg-[#F6F6F4] text-zinc-900 group-hover:bg-zinc-200"
                         }`}
                       >
                         <Plus className="h-4 w-4" />
@@ -1125,9 +1024,9 @@ export function EloqwntLandingShell({
         </section>
 
         {/* =====================================================================
-            TESTIMONIAL PROGRESS BAR & CAROUSEL CONTROLS (00:09)
+            HOME CHEF STORIES CAROUSEL
            ===================================================================== */}
-        <div className="px-2 sm:px-6 py-8 space-y-5">
+        <div className="px-2 sm:px-6 py-6 space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <p className="text-sm sm:text-base text-zinc-700 max-w-3xl italic">
               {TESTIMONIALS[testimonialIdx]?.quote}
@@ -1141,7 +1040,6 @@ export function EloqwntLandingShell({
           </div>
 
           <div className="flex items-center justify-between gap-6">
-            {/* Segmented progress bar matching 00:09 */}
             <div className="flex-1 h-0.5 bg-zinc-300 rounded-full overflow-hidden">
               <div
                 className="h-full bg-zinc-950 transition-all duration-300 ease-emil-out"
@@ -1181,65 +1079,28 @@ export function EloqwntLandingShell({
         </div>
 
         {/* =====================================================================
-            SECTION HEADER 3 ON STONE CANVAS (00:09): "• Contact us / AI Concierge"
+            SHEET 5: PERSONALIZED WEEKLY MEAL PLANNER FORM
            ===================================================================== */}
-        <div
+        <section
           id="concierge"
-          className="pt-6 pb-6 px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+          className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)] scroll-mt-20"
         >
-          <div className="lg:col-span-5 flex items-center gap-2.5 text-sm font-medium text-zinc-900 pt-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
-            <span>AI Meal Concierge</span>
-          </div>
-          <div className="lg:col-span-7">
-            <ScrollHeadlineReveal
-              className="text-3xl sm:text-4xl lg:text-[42px]"
-              lines={[
-                "The right sous chef at the right moment",
-                "changes everything.",
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* =====================================================================
-            SHEET 5 (00:09 - 00:10): "TELL US ABOUT YOUR NEXT STAGE" FORM SHEET
-           ===================================================================== */}
-        <section className="rounded-[32px] sm:rounded-[40px] bg-white p-6 sm:p-10 lg:p-14 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
-            {/* Left Column matching 00:09 - 00:10 */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-10">
-              <div className="space-y-6">
-                <span className="inline-block px-4 py-2 rounded-full border border-zinc-200 text-xs text-zinc-500">
-                  Start a culinary plan
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
+              <div className="space-y-5">
+                <span className="inline-block px-4 py-1.5 rounded-full border border-zinc-200 text-xs text-zinc-500">
+                  Personalized Weekly Menu
                 </span>
                 <h3 className="text-3xl sm:text-5xl font-normal tracking-[-0.03em] leading-[1.1] text-zinc-950">
-                  Tell us about your next meal stage.
+                  Plan your week around your taste &amp; goals.
                 </h3>
-              </div>
-
-              <div className="space-y-3 pt-4">
-                <p className="text-xs font-medium text-zinc-900">
-                  Powered by &amp; Verified:
+                <p className="text-sm text-zinc-500 leading-relaxed max-w-sm">
+                  Share your household size, protein targets, and weekly grocery
+                  budget to build a custom 7-day meal plan and shopping list.
                 </p>
-                <div className="flex items-center gap-2.5">
-                  <span
-                    title="Gemini 3.8 Flash + Embedding 2"
-                    className="h-11 w-11 rounded-full bg-[#F2F3F5] text-zinc-950 font-bold text-sm flex items-center justify-center"
-                  >
-                    G
-                  </span>
-                  <span
-                    title="LangGraph Multi-Agent DAG"
-                    className="h-11 w-11 rounded-full bg-[#F2F3F5] text-zinc-950 font-bold text-sm flex items-center justify-center"
-                  >
-                    ⚡
-                  </span>
-                </div>
               </div>
             </div>
 
-            {/* Right Column Form matching 00:09 - 00:10 */}
             <form
               onSubmit={handleConciergeSubmit}
               className="lg:col-span-7 space-y-8"
@@ -1259,7 +1120,7 @@ export function EloqwntLandingShell({
                 </div>
                 <div className="space-y-2 border-b border-zinc-200 pb-2.5">
                   <label className="block text-xs text-zinc-500">
-                    Household / Kitchen
+                    Household Size
                   </label>
                   <input
                     type="text"
@@ -1271,7 +1132,7 @@ export function EloqwntLandingShell({
                 </div>
                 <div className="space-y-2 border-b border-zinc-200 pb-2.5">
                   <label className="block text-xs text-zinc-500">
-                    Daily Macro Target
+                    Daily Nutrition Goal
                   </label>
                   <input
                     type="text"
@@ -1283,7 +1144,7 @@ export function EloqwntLandingShell({
                 </div>
                 <div className="space-y-2 border-b border-zinc-200 pb-2.5">
                   <label className="block text-xs text-zinc-500">
-                    Cuisine Split
+                    Preferred Cuisines
                   </label>
                   <input
                     type="text"
@@ -1295,19 +1156,18 @@ export function EloqwntLandingShell({
                 </div>
               </div>
 
-              {/* "I'm interested in..." selectable pills matching 00:10 */}
               <div className="space-y-3">
                 <label className="block text-xs text-zinc-500">
-                  I&apos;m interested in...
+                  Dietary Preferences
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    "High-Protein Remix",
-                    "Indian Thali Slots",
-                    "Jain / No Onion-Garlic",
-                    "Kinetic Parallel Prep",
-                    "Veganize",
-                    "10-Min Quick Cart",
+                    "High-Protein",
+                    "Indian Thali",
+                    "Jain (No Onion-Garlic)",
+                    "Quick 25-Min Meals",
+                    "Plant-Based",
+                    "Low-Oil Air-Fryer",
                   ].map((pill) => {
                     const active = selectedInterests.includes(pill);
                     return (
@@ -1315,7 +1175,7 @@ export function EloqwntLandingShell({
                         key={pill}
                         type="button"
                         onClick={() => toggleInterest(pill)}
-                        className={`px-4 py-2.5 rounded-full text-xs font-medium border transition-all duration-150 active:scale-[0.97] ${
+                        className={`px-4 py-2 rounded-full text-xs font-medium border transition-all duration-150 active:scale-[0.97] ${
                           active
                             ? "bg-zinc-950 text-white border-zinc-950"
                             : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400"
@@ -1328,7 +1188,6 @@ export function EloqwntLandingShell({
                 </div>
               </div>
 
-              {/* "Weekly Grocery Budget (INR)" selectable pills matching 00:10 */}
               <div className="space-y-3">
                 <label className="block text-xs text-zinc-500">
                   Weekly Grocery Budget (INR)
@@ -1342,7 +1201,7 @@ export function EloqwntLandingShell({
                           key={b}
                           type="button"
                           onClick={() => setSelectedBudget(b)}
-                          className={`px-4 py-2.5 rounded-full text-xs font-medium border transition-all duration-150 active:scale-[0.97] ${
+                          className={`px-4 py-2 rounded-full text-xs font-medium border transition-all duration-150 active:scale-[0.97] ${
                             active
                               ? "bg-zinc-950 text-white border-zinc-950"
                               : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400"
@@ -1356,21 +1215,19 @@ export function EloqwntLandingShell({
                 </div>
               </div>
 
-              {/* "Tell us about your fridge leftovers & constraints" underline textarea */}
               <div className="space-y-2 border-b border-zinc-200 pb-3">
                 <label className="block text-xs text-zinc-500">
-                  Tell us about your fridge leftovers &amp; schedule
+                  Ingredients on hand or special notes
                 </label>
                 <textarea
                   rows={2}
                   value={conciergePrompt}
                   onChange={(e) => setConciergePrompt(e.target.value)}
-                  placeholder="Write something concise... e.g., Use leftover 250g paneer on Tuesday, non-veg on Wed/Fri/Sun."
+                  placeholder="e.g., Use 250g paneer on Tuesday, lighter dinners on weekdays..."
                   className="w-full bg-transparent text-sm text-zinc-950 placeholder:text-zinc-300 focus:outline-none resize-none"
                 />
               </div>
 
-              {/* Full-width Black Pill Submit Button matching 00:10 */}
               <button
                 type="submit"
                 className="w-full py-4 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-sm font-medium flex items-center justify-center gap-2 transition-transform duration-150 ease-emil-out active:scale-[0.99]"
@@ -1378,10 +1235,10 @@ export function EloqwntLandingShell({
                 {conciergeSubmitted ? (
                   <>
                     <Check className="h-4 w-4 text-emerald-400" />
-                    <span>Opening Multi-Slot Thali Planner...</span>
+                    <span>Building Your 7-Day Meal Plan...</span>
                   </>
                 ) : (
-                  <span>Submit &amp; Generate 7-Day Plan</span>
+                  <span>Build My 7-Day Meal Plan</span>
                 )}
               </button>
             </form>
@@ -1389,24 +1246,20 @@ export function EloqwntLandingShell({
         </section>
 
         {/* =====================================================================
-            FOOTER (00:11 - 00:16): MULTI-COLUMN CASCADE REVEAL FOOTER ON #ECEEF0
+            MINIMALIST FOOTER ON #ECEEF0
            ===================================================================== */}
-        <footer ref={footerRef} className="pt-14 pb-8 px-2 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-12 gap-10 pb-14">
-            {/* Col 1: Platform */}
-            <div className="col-span-1 md:col-span-2 space-y-4">
-              <p className="text-xs font-semibold text-zinc-950">Platform:</p>
-              <ul className="space-y-2.5 text-sm">
+        <footer ref={footerRef} className="pt-12 pb-8 px-2 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-12 gap-10 pb-12">
+            <div className="col-span-1 md:col-span-3 space-y-3">
+              <p className="text-xs font-semibold text-zinc-950">Kitchen</p>
+              <ul className="space-y-2 text-sm">
                 {[
-                  { label: "About", tab: "hub" as ActiveTab },
-                  { label: "Recipe Studio", tab: "hub" as ActiveTab },
-                  { label: "Thali Planner", tab: "planner" as ActiveTab },
-                  { label: "Kinetic DAG", tab: "kinetic-prep" as ActiveTab },
-                  { label: "Voice Sous Chef", tab: "sous-chef" as ActiveTab },
-                  { label: "Pantry Rescue", tab: "pantry" as ActiveTab },
+                  { label: "Recipes", tab: "hub" as ActiveTab },
+                  { label: "Weekly Meal Plan", tab: "planner" as ActiveTab },
+                  { label: "Cook Together", tab: "kinetic-prep" as ActiveTab },
+                  { label: "Voice Chef", tab: "sous-chef" as ActiveTab },
+                  { label: "My Pantry", tab: "pantry" as ActiveTab },
                   { label: "Cookbooks", tab: "social" as ActiveTab },
-                  { label: "Communities", tab: "social" as ActiveTab },
-                  { label: "Testimonials", tab: "hub" as ActiveTab },
                 ].map((item, i) => (
                   <motion.li
                     key={item.label}
@@ -1436,19 +1289,18 @@ export function EloqwntLandingShell({
               </ul>
             </div>
 
-            {/* Col 2: AI Engines */}
-            <div className="col-span-1 md:col-span-3 space-y-4">
-              <p className="text-xs font-semibold text-zinc-950">AI Engines:</p>
-              <ul className="space-y-2.5 text-sm">
+            <div className="col-span-1 md:col-span-4 space-y-3">
+              <p className="text-xs font-semibold text-zinc-950">
+                Dietary Styles
+              </p>
+              <ul className="space-y-2 text-sm text-zinc-600">
                 {[
-                  "URL & Reel Scraper",
-                  "Gemini 3.8 Vision OCR",
-                  "150ml Katori Converter",
-                  "LangGraph Meal Solver",
-                  "Parallel Prep Scheduler",
-                  "pgvector Taste Matcher",
-                  "EAN-13 Barcode Scanner",
-                  "10-Min Quick-Commerce Sync",
+                  "North & South Indian Thalis",
+                  "High-Protein Home Meals",
+                  "Jain (No Onion-Garlic)",
+                  "Plant-Based & Vegan",
+                  "Low-Oil Air-Fryer Recipes",
+                  "20-Minute Weeknight Tiffins",
                 ].map((label, i) => (
                   <motion.li
                     key={label}
@@ -1466,70 +1318,24 @@ export function EloqwntLandingShell({
                       ease: EMIL_EASE_OUT,
                     }}
                   >
-                    <button
-                      type="button"
-                      onClick={() => jumpToStudioTab("hub")}
-                      className="text-zinc-600 hover:text-zinc-950 transition-colors text-left"
-                    >
-                      {label}
-                    </button>
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Col 3: Cuisines & Diets */}
-            <div className="col-span-2 md:col-span-3 space-y-4">
-              <p className="text-xs font-semibold text-zinc-950">
-                Cuisines &amp; Diets:
-              </p>
-              <ul className="space-y-2.5 text-sm">
-                {[
-                  "North & South Indian Thali",
-                  "High-Protein (+40% P)",
-                  "Jain (No Onion-Garlic)",
-                  "Plant-Based / Vegan",
-                  "Air-Fryer Low-Oil",
-                  "Mediterranean & Asian",
-                  "Weeknight 20-Min Tiffins",
-                  "Zero-Waste Fridge Rescue",
-                  "Quick-Commerce Households",
-                  "Collaborative Family Boxes",
-                ].map((label, i) => (
-                  <motion.li
-                    key={label}
-                    initial={
-                      reduceMotion ? { opacity: 0.2 } : { opacity: 0.15, y: 6 }
-                    }
-                    animate={
-                      footerInView
-                        ? { opacity: 1, y: 0 }
-                        : { opacity: 0.15, y: 6 }
-                    }
-                    transition={{
-                      duration: 0.4,
-                      delay: reduceMotion ? 0 : i * 0.04 + 0.08,
-                      ease: EMIL_EASE_OUT,
-                    }}
-                    className="text-zinc-600"
-                  >
                     {label}
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            {/* Col 4: Subscribe & Socials matching 00:11 - 00:16 */}
-            <div className="col-span-2 md:col-span-4 space-y-6">
+            <div className="col-span-2 md:col-span-5 space-y-5">
               <div className="space-y-3">
                 <p className="text-xs font-semibold text-zinc-950">
-                  Import a recipe URL or subscribe to weekly updates
+                  Import a recipe from any link
                 </p>
                 <div className="flex items-center border-b border-zinc-300 pb-2.5">
                   <input
                     type="text"
-                    placeholder="Paste YouTube / Reel link or your email"
-                    className="w-full bg-transparent text-sm text-zinc-950 placeholder:text-zinc-400 focus:outline-none"
+                    placeholder="Paste a YouTube, Instagram Reel, or blog link..."
+                    onFocus={onOpenOcrModal}
+                    readOnly
+                    className="w-full bg-transparent text-sm text-zinc-950 placeholder:text-zinc-400 focus:outline-none cursor-pointer"
                   />
                   <button
                     type="button"
@@ -1540,52 +1346,23 @@ export function EloqwntLandingShell({
                   </button>
                 </div>
                 <p className="text-[11px] text-zinc-400 leading-relaxed">
-                  By continuing, you agree to our{" "}
-                  <span className="underline text-zinc-600">
-                    Culinary Data Policy
-                  </span>
-                  . All recipes normalize strictly into gram &amp; katori units.
+                  Automatically formats ingredients into Indian katoris, grams,
+                  and US cups.
                 </p>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <p className="text-xs font-semibold text-zinc-950">
-                  Quick-Commerce &amp; Socials:
-                </p>
-                <div className="flex items-center gap-2.5">
-                  {["SW", "BL", "ZP", "IG", "YT"].map((code) => (
-                    <button
-                      key={code}
-                      type="button"
-                      onClick={() => jumpToStudioTab("planner")}
-                      className="h-10 w-10 rounded-full bg-white hover:bg-zinc-950 text-zinc-900 hover:text-white text-[11px] font-semibold flex items-center justify-center shadow-sm transition-colors active:scale-95"
-                    >
-                      {code}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Bar matching 00:13 - 00:16 */}
           <div className="pt-8 border-t border-zinc-300/80 flex flex-wrap items-center justify-between gap-4">
-            <a
-              href="#top"
-              className="inline-flex items-center gap-2.5"
-            >
-              <MiseFoodGlyph variant={logoVariant} size={34} />
+            <a href="#top" className="inline-flex items-center gap-2.5">
+              <MiseFoodGlyph variant="crown-katori" size={34} />
               <span className="text-2xl font-switzer font-bold tracking-[-0.04em] text-[#1E1916]">
                 misefood
               </span>
             </a>
 
             <p className="text-xs text-zinc-500">
-              © 2026 MiseFood AI. All rights reserved.{" "}
-              <span className="mx-1.5 text-zinc-950">•</span>{" "}
-              <span className="text-zinc-800 font-medium">
-                Indian &amp; Global Culinary OS
-              </span>
+              © 2026 MiseFood. Thoughtfully crafted for home kitchens.
             </p>
 
             <button
@@ -1605,10 +1382,10 @@ export function EloqwntLandingShell({
         </footer>
       </div>
 
-      {/* Instant Command Palette (Zero animation on keyboard trigger per Emil's rule) */}
+      {/* Instant Command Palette (Zero animation on keyboard trigger) */}
       {cmdOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
           onClick={() => setCmdOpen(false)}
         >
           <div
@@ -1622,7 +1399,7 @@ export function EloqwntLandingShell({
                 autoFocus
                 value={cmdQuery}
                 onChange={(e) => setCmdQuery(e.target.value)}
-                placeholder="Jump to recipe, normalized ingredient, or AI module..."
+                placeholder="Search recipes, ingredients, or kitchen tools..."
                 className="w-full bg-transparent text-sm text-zinc-950 placeholder:text-zinc-400 focus:outline-none"
               />
               <button
@@ -1647,12 +1424,10 @@ export function EloqwntLandingShell({
                   className="w-full px-3 py-2 rounded-lg text-left text-sm text-zinc-900 hover:bg-zinc-100 flex items-center justify-between"
                 >
                   <span className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-amber-500" />
-                    Import Recipe from URL / YouTube / Instagram Reel / OCR
+                    <Sparkles className="h-4 w-4 text-[#C85A32]" />
+                    Import Recipe from Link or Cookbook Photo
                   </span>
-                  <span className="text-xs text-zinc-400">
-                    Universal Importer
-                  </span>
+                  <span className="text-xs text-zinc-400">Import</span>
                 </button>
                 <button
                   type="button"
@@ -1663,10 +1438,10 @@ export function EloqwntLandingShell({
                   className="w-full px-3 py-2 rounded-lg text-left text-sm text-zinc-900 hover:bg-zinc-100 flex items-center justify-between"
                 >
                   <span className="flex items-center gap-2">
-                    <GitMerge className="h-4 w-4 text-purple-600" />
-                    Open Kinetic Loop Multi-Recipe Parallel Timeline
+                    <GitMerge className="h-4 w-4 text-zinc-700" />
+                    Cook 2–4 Dishes Together
                   </span>
-                  <span className="text-xs text-zinc-400">2-4 Dishes</span>
+                  <span className="text-xs text-zinc-400">Timeline</span>
                 </button>
               </div>
               <div className="pt-2">
