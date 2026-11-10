@@ -497,7 +497,7 @@ export function ThaliAndCartFeatureMockup({
               onClick={onLaunchPlanner}
               className="btn-press px-3.5 py-1.5 rounded-full bg-[#3f6212] text-[#fcfcfd] font-medium"
             >
-              Plan Full 7-Day Week →
+              Build 7-Day Regional Menu →
             </button>
           </div>
         </div>

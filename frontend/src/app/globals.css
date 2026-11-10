@@ -87,7 +87,26 @@
   }
 }
 
+/* Generated 7-day plan: staggered entrance (occasional action, 220ms ease-out) */
+@keyframes plan-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.plan-enter {
+  animation: plan-enter 220ms var(--ease-out) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .plan-enter {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
   }

@@ -14,7 +14,6 @@ import { type ActiveTab } from "@/components/layout/AppShell";
 import { EloqwntLandingShell } from "@/components/landing/EloqwntLandingShell";
 import { HandsFreeCookView } from "@/components/cooking/HandsFreeCookView";
 import { PantryRescueView } from "@/components/pantry/PantryRescueView";
-import { SmartMealPlanner } from "@/components/planner/SmartMealPlanner";
 import { IngredientList } from "@/components/recipes/IngredientList";
 import { OcrImporterModal } from "@/components/recipes/OcrImporterModal";
 import { ParallelTimeline } from "@/components/recipes/ParallelTimeline";
@@ -51,9 +50,6 @@ export default function MiseFoodWorkspacePage() {
   const [isForking, setIsForking] = useState(false);
   const [activeRemixLoading, setActiveRemixLoading] =
     useState<RemixMode | null>(null);
-  const [plannerPrompt, setPlannerPrompt] = useState<string | undefined>(
-    undefined
-  );
 
   const {
     timers,
@@ -187,10 +183,6 @@ export default function MiseFoodWorkspacePage() {
       activeTimers={timers}
       onStartQuickTimer={(label, seconds, stepNum) => {
         startTimer(label, seconds, stepNum);
-      }}
-      onApplyConciergePrompt={(promptText) => {
-        setPlannerPrompt(promptText);
-        setActiveTab("planner");
       }}
     >
       {activeTab === "hub" && (
@@ -386,10 +378,6 @@ export default function MiseFoodWorkspacePage() {
             startTimer(label, seconds, stepNum);
           }}
         />
-      )}
-
-      {activeTab === "planner" && (
-        <SmartMealPlanner initialPrompt={plannerPrompt} />
       )}
 
       {activeTab === "pantry" && (

@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
   BookOpen,
-  CalendarRange,
   Check,
   Command,
   Copy,
@@ -30,6 +29,7 @@ import {
   ParallelTimelineFeatureMockup,
   ThaliAndCartFeatureMockup,
 } from "@/components/landing/ShowcaseMockups";
+import { WeeklyMenuBuilder } from "@/components/planner/WeeklyMenuBuilder";
 import type { ActiveCookingTimer, Recipe, UnitSystem } from "@/types/recipe";
 
 interface EloqwntLandingShellProps {
@@ -42,7 +42,6 @@ interface EloqwntLandingShellProps {
   onSelectRecipe: (recipe: Recipe) => void;
   activeTimers: ActiveCookingTimer[];
   onStartQuickTimer?: (label: string, seconds: number, stepNum: number) => void;
-  onApplyConciergePrompt?: (prompt: string) => void;
   children: React.ReactNode;
 }
 
@@ -159,25 +158,11 @@ export function EloqwntLandingShell({
   onSelectRecipe,
   activeTimers,
   onStartQuickTimer,
-  onApplyConciergePrompt,
   children,
 }: EloqwntLandingShellProps) {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [cmdQuery, setCmdQuery] = useState("");
   const [cliCopied, setCliCopied] = useState(false);
-
-  // Kept existing content: Personalized Weekly Meal Concierge state (placed in Section 6 Download & Setup)
-  const [chefName, setChefName] = useState("");
-  const [householdName, setHouseholdName] = useState("");
-  const [macroTarget, setMacroTarget] = useState("2000 kcal • 130g Protein");
-  const [cuisinePref, setCuisinePref] = useState("Indian Thali + Global");
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([
-    "High-Protein",
-    "Indian Thali",
-  ]);
-  const [selectedBudget, setSelectedBudget] = useState("₹1.5k – ₹2.5k");
-  const [conciergePrompt, setConciergePrompt] = useState("");
-  const [conciergeSubmitted, setConciergeSubmitted] = useState(false);
 
   const studioSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -219,43 +204,10 @@ export function EloqwntLandingShell({
     }
   };
 
-  const toggleInterest = (label: string) => {
-    setSelectedInterests((prev) =>
-      prev.includes(label) ? prev.filter((i) => i !== label) : [...prev, label]
-    );
-  };
-
-  const handleConciergeSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setConciergeSubmitted(true);
-
-    const budgetNumeric =
-      selectedBudget === "< ₹1.5k"
-        ? "₹1500"
-        : selectedBudget === "₹1.5k – ₹2.5k"
-          ? "₹2400"
-          : selectedBudget === "₹2.5k – ₹4k"
-            ? "₹3500"
-            : "₹4500";
-
-    const builtPrompt = [
-      `Plan a 7-day ${cuisinePref} menu`,
-      macroTarget ? `targeting ${macroTarget}` : "",
-      `under ${budgetNumeric} weekly budget`,
-      selectedInterests.length > 0
-        ? `with ${selectedInterests.join(", ")}`
-        : "",
-      conciergePrompt.trim() ? `(${conciergePrompt.trim()})` : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    onApplyConciergePrompt?.(builtPrompt);
-
-    setTimeout(() => {
-      jumpToStudioTab("planner");
-      setConciergeSubmitted(false);
-    }, 250);
+  const jumpToMenuBuilder = () => {
+    document
+      .getElementById("menu-builder")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const filteredRecipes = recipes.filter(
@@ -276,11 +228,6 @@ export function EloqwntLandingShell({
       id: "hub",
       label: "Recipes & Remix",
       icon: <Flame className="h-3.5 w-3.5" />,
-    },
-    {
-      id: "planner",
-      label: "Thali Planner",
-      icon: <CalendarRange className="h-3.5 w-3.5" />,
     },
     {
       id: "kinetic-prep",
@@ -359,21 +306,19 @@ export function EloqwntLandingShell({
           >
             <button
               type="button"
+              onClick={jumpToMenuBuilder}
+              className="hover:text-[#000000] transition-colors font-semibold text-[#3f6212]"
+            >
+              7-Day Menu
+            </button>
+            <button
+              type="button"
               onClick={() => jumpToStudioTab("hub")}
               className={`hover:text-[#000000] transition-colors ${
                 activeTab === "hub" ? "text-[#000000] font-semibold" : ""
               }`}
             >
               Recipes &amp; Remix
-            </button>
-            <button
-              type="button"
-              onClick={() => jumpToStudioTab("planner")}
-              className={`hover:text-[#000000] transition-colors ${
-                activeTab === "planner" ? "text-[#000000] font-semibold" : ""
-              }`}
-            >
-              Thali Planner
             </button>
             <button
               type="button"
@@ -467,19 +412,31 @@ export function EloqwntLandingShell({
 
       <main>
         {/* =====================================================================
-            SECTION 3: HERO — Stage layout on the alternate ground (#e9eade).
-            Large display heading (70px desktop / 53px mobile), two actions,
-            working product UI mockup (live Kitchen Studio), trust caption & key numbers.
+            FIRST SECTION: CUSTOM 7-DAY REGIONAL MENU BUILDER
+            Interactive North, South, East, West & Northeast Indian planner first.
            ===================================================================== */}
-        <section className="bg-[#e9eade] pt-[85px] pb-[64px] lg:pt-[128px] lg:pb-[85px] px-6">
+        <section
+          id="menu-builder"
+          className="bg-[#f1f3e6] pt-10 pb-[64px] lg:pt-14 lg:pb-[85px] px-6 scroll-mt-24"
+        >
+          <div className="max-w-[1200px] mx-auto">
+            <WeeklyMenuBuilder />
+          </div>
+        </section>
+
+        {/* =====================================================================
+            SECTION 3: HERO — Stage layout on the alternate ground (#e9eade).
+            Large display heading, two actions, working Kitchen Studio, key numbers.
+           ===================================================================== */}
+        <section className="bg-[#e9eade] pt-[85px] pb-[64px] lg:pt-[110px] lg:pb-[85px] px-6">
           <div className="max-w-[1200px] mx-auto">
             {/* Centered Stage Heading & Actions */}
             <div className="text-center max-w-[980px] mx-auto">
-              <h1 className="text-[53px] lg:text-[70px] font-medium leading-[1.04] tracking-[-0.03em] text-[#000000]">
+              <h2 className="text-[46px] lg:text-[64px] font-medium leading-[1.04] tracking-[-0.03em] text-[#000000]">
                 From saved recipe links to
                 <br className="hidden sm:inline" /> four dishes finishing hot
                 <br className="hidden sm:inline" /> at the exact same minute.
-              </h1>
+              </h2>
 
               <p className="mt-6 text-[16px] text-[#333333] max-w-[660px] mx-auto leading-[1.6]">
                 <strong>MiseFood</strong> strips clutter from blogs, Reels, and
@@ -749,10 +706,10 @@ export function EloqwntLandingShell({
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => jumpToStudioTab("planner")}
+                    onClick={jumpToMenuBuilder}
                     className="btn-press px-5 py-2.5 rounded-full bg-[#3f6212] text-[#fcfcfd] text-xs font-medium"
                   >
-                    Open 7-Day Thali Planner
+                    Build 7-Day Regional Menu
                   </button>
                   <button
                     type="button"
@@ -766,7 +723,7 @@ export function EloqwntLandingShell({
 
               <div className="lg:col-span-7">
                 <ThaliAndCartFeatureMockup
-                  onLaunchPlanner={() => jumpToStudioTab("planner")}
+                  onLaunchPlanner={jumpToMenuBuilder}
                   onLaunchPantry={() => jumpToStudioTab("pantry")}
                 />
               </div>
@@ -924,197 +881,6 @@ export function EloqwntLandingShell({
                 )}
               </button>
             </div>
-
-            {/* Preserved Interactive Weekly Meal Concierge Configurator */}
-            <div
-              id="concierge"
-              className="rounded-[8px] bg-[#e9eade] border border-[#d3d4c8] p-6 sm:p-10 scroll-mt-24"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <div className="lg:col-span-5 space-y-4">
-                  <span className="inline-block px-3 py-1 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-xs font-semibold text-[#3f6212]">
-                    Custom 7-Day Menu Builder
-                  </span>
-                  <h3 className="text-3xl sm:text-4xl font-medium tracking-[-0.03em] leading-[1.1] text-[#000000]">
-                    Configure your household macros &amp; weekly ₹ budget.
-                  </h3>
-                  <p className="text-sm text-[#333333] leading-relaxed">
-                    Set your daily protein target, dietary preferences, and
-                    weekly grocery budget to populate the 7-Day Thali Planner
-                    above.
-                  </p>
-                </div>
-
-                <form
-                  onSubmit={handleConciergeSubmit}
-                  className="lg:col-span-7 space-y-6"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="concierge-name"
-                        className="block text-xs font-semibold text-[#333333]"
-                      >
-                        Your Name
-                      </label>
-                      <input
-                        id="concierge-name"
-                        type="text"
-                        value={chefName}
-                        onChange={(e) => setChefName(e.target.value)}
-                        placeholder="Aarav Sharma"
-                        className="w-full rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] px-3.5 py-2.5 text-sm text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="concierge-household"
-                        className="block text-xs font-semibold text-[#333333]"
-                      >
-                        Household Size
-                      </label>
-                      <input
-                        id="concierge-household"
-                        type="text"
-                        value={householdName}
-                        onChange={(e) => setHouseholdName(e.target.value)}
-                        placeholder="4 Adults • Bengaluru"
-                        className="w-full rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] px-3.5 py-2.5 text-sm text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="concierge-macro"
-                        className="block text-xs font-semibold text-[#333333]"
-                      >
-                        Daily Nutrition Target
-                      </label>
-                      <input
-                        id="concierge-macro"
-                        type="text"
-                        value={macroTarget}
-                        onChange={(e) => setMacroTarget(e.target.value)}
-                        placeholder="2000 kcal • 130g Protein"
-                        className="w-full rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] px-3.5 py-2.5 text-sm text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="concierge-cuisine"
-                        className="block text-xs font-semibold text-[#333333]"
-                      >
-                        Preferred Cuisines
-                      </label>
-                      <input
-                        id="concierge-cuisine"
-                        type="text"
-                        value={cuisinePref}
-                        onChange={(e) => setCuisinePref(e.target.value)}
-                        placeholder="Indian Thali + Mediterranean"
-                        className="w-full rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] px-3.5 py-2.5 text-sm text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <span className="block text-xs font-semibold text-[#333333]">
-                      Dietary Focus
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        "High-Protein",
-                        "Indian Thali",
-                        "Jain (No Onion-Garlic)",
-                        "Quick 25-Min Meals",
-                        "Plant-Based",
-                        "Low-Oil Air-Fryer",
-                      ].map((pill) => {
-                        const active = selectedInterests.includes(pill);
-                        return (
-                          <button
-                            key={pill}
-                            type="button"
-                            onClick={() => toggleInterest(pill)}
-                            className={`btn-press px-3.5 py-1.5 rounded-full text-xs font-medium border ${
-                              active
-                                ? "bg-[#3f6212] text-[#fcfcfd] border-[#3f6212]"
-                                : "bg-[#f1f3e6] text-[#000000] border-[#d3d4c8]"
-                            }`}
-                          >
-                            {pill}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
-                    <div className="sm:col-span-7 space-y-2">
-                      <span className="block text-xs font-semibold text-[#333333]">
-                        Weekly Grocery Budget (INR)
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {[
-                          "< ₹1.5k",
-                          "₹1.5k – ₹2.5k",
-                          "₹2.5k – ₹4k",
-                          "₹4k+",
-                        ].map((b) => {
-                          const active = selectedBudget === b;
-                          return (
-                            <button
-                              key={b}
-                              type="button"
-                              onClick={() => setSelectedBudget(b)}
-                              className={`btn-press px-3.5 py-1.5 rounded-full text-xs font-medium border tabular-nums ${
-                                active
-                                  ? "bg-[#3f6212] text-[#fcfcfd] border-[#3f6212]"
-                                  : "bg-[#f1f3e6] text-[#000000] border-[#d3d4c8]"
-                              }`}
-                            >
-                              {b}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="sm:col-span-5">
-                      <button
-                        type="submit"
-                        className="btn-press w-full py-3 px-5 rounded-full bg-[#3f6212] hover:bg-[#33500e] text-[#fcfcfd] text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
-                      >
-                        {conciergeSubmitted ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            <span>Applying to Planner...</span>
-                          </>
-                        ) : (
-                          <span>Generate 7-Day Plan →</span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label
-                      htmlFor="concierge-notes"
-                      className="block text-xs font-semibold text-[#333333]"
-                    >
-                      Fridge leftovers or schedule notes (optional)
-                    </label>
-                    <input
-                      id="concierge-notes"
-                      type="text"
-                      value={conciergePrompt}
-                      onChange={(e) => setConciergePrompt(e.target.value)}
-                      placeholder="e.g., Use leftover 250g paneer on Tuesday, lighter dinners on weekdays"
-                      className="w-full rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] px-3.5 py-2 text-sm text-[#000000] placeholder:text-[#4d4c4c] focus:outline-none focus:border-[#3f6212]"
-                    />
-                  </div>
-                </form>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -1176,9 +942,17 @@ export function EloqwntLandingShell({
                 Kitchen Studio
               </p>
               <ul className="space-y-2.5 text-sm text-[#333333]">
+                <li>
+                  <button
+                    type="button"
+                    onClick={jumpToMenuBuilder}
+                    className="hover:text-[#000000] transition-colors"
+                  >
+                    7-Day Regional Menu
+                  </button>
+                </li>
                 {[
                   { label: "Recipes & AI Remix", tab: "hub" as ActiveTab },
-                  { label: "7-Day Thali Planner", tab: "planner" as ActiveTab },
                   {
                     label: "Cook Together Timeline",
                     tab: "kinetic-prep" as ActiveTab,
@@ -1394,10 +1168,10 @@ export function EloqwntLandingShell({
               </button>
               <button
                 type="button"
-                onClick={() => jumpToStudioTab("planner")}
+                onClick={jumpToMenuBuilder}
                 className="hover:text-[#000000]"
               >
-                Thali Planner
+                7-Day Menu
               </button>
               <button
                 type="button"
