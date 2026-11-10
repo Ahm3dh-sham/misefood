@@ -7,6 +7,20 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --font-switzer: "Switzer", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-switzer);
+    letter-spacing: -0.03em;
+  }
 }
 
 html {
@@ -18,6 +32,11 @@ body {
   color: #09090b;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+}
+
+.font-heading,
+.font-switzer {
+  font-family: var(--font-switzer);
 }
 
 @media (prefers-reduced-motion: reduce) {
