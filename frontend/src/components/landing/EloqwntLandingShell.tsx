@@ -302,12 +302,12 @@ export function EloqwntLandingShell({
           {/* 4 Navigation Links */}
           <nav
             aria-label="Primary"
-            className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#333333]"
+            className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm font-medium text-[#333333]"
           >
             <button
               type="button"
               onClick={() => jumpToStudioTab("hub")}
-              className={`hover:text-[#000000] transition-colors ${
+              className={`whitespace-nowrap hover:text-[#000000] transition-colors ${
                 activeTab === "hub" ? "text-[#000000] font-semibold" : ""
               }`}
             >
@@ -316,14 +316,14 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={jumpToMenuBuilder}
-              className="hover:text-[#000000] transition-colors font-semibold text-[#3f6212]"
+              className="whitespace-nowrap hover:text-[#000000] transition-colors font-semibold text-[#3f6212]"
             >
               7-Day Menu
             </button>
             <button
               type="button"
               onClick={() => jumpToStudioTab("kinetic-prep")}
-              className={`hover:text-[#000000] transition-colors ${
+              className={`whitespace-nowrap hover:text-[#000000] transition-colors ${
                 activeTab === "kinetic-prep"
                   ? "text-[#000000] font-semibold"
                   : ""
@@ -334,7 +334,7 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={() => jumpToStudioTab("sous-chef")}
-              className={`hover:text-[#000000] transition-colors flex items-center gap-1.5 ${
+              className={`whitespace-nowrap hover:text-[#000000] transition-colors flex items-center gap-1.5 ${
                 activeTab === "sous-chef" || activeTab === "pantry"
                   ? "text-[#000000] font-semibold"
                   : ""
@@ -350,11 +350,11 @@ export function EloqwntLandingShell({
           </nav>
 
           {/* Header Actions: Katori Unit Switcher + Search + Import + Primary CTA */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <div
               role="group"
               aria-label="Kitchen measurement units"
-              className="hidden sm:inline-flex items-center bg-[#f1f3e6] p-0.5 rounded-full border border-[#d3d4c8] text-xs"
+              className="hidden sm:inline-flex items-center bg-[#f1f3e6] p-0.5 rounded-full border border-[#d3d4c8] text-xs whitespace-nowrap shrink-0"
             >
               {(
                 [
@@ -367,7 +367,7 @@ export function EloqwntLandingShell({
                   key={u.id}
                   type="button"
                   onClick={() => onChangeUnitSystem(u.id)}
-                  className={`btn-press px-2.5 py-1 rounded-full font-medium ${
+                  className={`btn-press whitespace-nowrap px-2.5 py-1 rounded-full font-medium ${
                     unitSystem === u.id
                       ? "bg-[#3f6212] text-[#fcfcfd]"
                       : "text-[#333333] hover:text-[#000000]"
@@ -382,7 +382,7 @@ export function EloqwntLandingShell({
               type="button"
               onClick={() => setCmdOpen(true)}
               aria-label="Search recipes and commands"
-              className="btn-press hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-xs font-medium text-[#333333] hover:text-[#000000]"
+              className="btn-press hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] text-xs font-medium text-[#333333] hover:text-[#000000] whitespace-nowrap shrink-0"
             >
               <Search className="h-3.5 w-3.5" />
               <kbd className="font-mono text-[11px] text-[#4d4c4c] flex items-center">
@@ -393,7 +393,7 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={onOpenOcrModal}
-              className="btn-press px-3.5 py-2 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] hover:border-[#3f6212] text-xs font-medium text-[#000000] hidden sm:inline-flex items-center gap-1.5"
+              className="btn-press px-3.5 py-2 rounded-full bg-[#f1f3e6] border border-[#d3d4c8] hover:border-[#3f6212] text-xs font-medium text-[#000000] hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
               <ScanText className="h-3.5 w-3.5 text-[#3f6212]" />
               <span>Import Recipe</span>
@@ -402,7 +402,7 @@ export function EloqwntLandingShell({
             <button
               type="button"
               onClick={() => jumpToStudioTab("hub")}
-              className="btn-press px-4 py-2 rounded-full bg-[#3f6212] hover:bg-[#33500e] text-[#fcfcfd] text-xs font-medium inline-flex items-center gap-1.5"
+              className="btn-press px-4 py-2 rounded-full bg-[#3f6212] hover:bg-[#33500e] text-[#fcfcfd] text-xs font-medium inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
               <span>Open Kitchen Studio</span>
             </button>
@@ -946,15 +946,6 @@ export function EloqwntLandingShell({
                 <li>
                   <button
                     type="button"
-                    onClick={() => jumpToStudioTab("hub")}
-                    className="hover:text-[#000000] transition-colors"
-                  >
-                    Recipes &amp; AI Remix
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
                     onClick={jumpToMenuBuilder}
                     className="hover:text-[#000000] transition-colors"
                   >
@@ -962,6 +953,7 @@ export function EloqwntLandingShell({
                   </button>
                 </li>
                 {[
+                  { label: "Recipes & AI Remix", tab: "hub" as ActiveTab },
                   {
                     label: "Cook Together Timeline",
                     tab: "kinetic-prep" as ActiveTab,
