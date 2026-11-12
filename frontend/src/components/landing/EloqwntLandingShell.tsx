@@ -29,6 +29,7 @@ import {
   ParallelTimelineFeatureMockup,
   ThaliAndCartFeatureMockup,
 } from "@/components/landing/ShowcaseMockups";
+import { AnimatedLogoHero } from "@/components/landing/AnimatedLogoHero";
 import { WeeklyMenuBuilder } from "@/components/planner/WeeklyMenuBuilder";
 import type { ActiveCookingTimer, Recipe, UnitSystem } from "@/types/recipe";
 
@@ -411,54 +412,35 @@ export function EloqwntLandingShell({
       </header>
 
       <main>
+        <AnimatedLogoHero
+          onExplore={() => jumpToStudioTab("hub")}
+          onImport={onOpenOcrModal}
+        />
         {/* =====================================================================
-            FIRST SECTION: HERO — Stage layout on the alternate ground (#e9eade).
-            Large display heading (70px desktop / 53px mobile), two actions,
-            working Kitchen Studio, and key numbers.
+            FIRST SECTION: LIVE STUDIO — The existing interactive workspace
+            remains directly below the new brand-led animated landing hero.
            ===================================================================== */}
         <section className="bg-[#e9eade] pt-[85px] pb-[64px] lg:pt-[128px] lg:pb-[85px] px-6">
           <div className="max-w-[1200px] mx-auto">
-            {/* Centered Stage Heading & Actions */}
-            <div className="text-center max-w-[980px] mx-auto">
-              <h1 className="text-[53px] lg:text-[70px] font-medium leading-[1.04] tracking-[-0.03em] text-[#000000]">
-                From saved recipe links to
-                <br className="hidden sm:inline" /> four dishes finishing hot
-                <br className="hidden sm:inline" /> at the exact same minute.
-              </h1>
-
-              <p className="mt-6 text-[16px] text-[#333333] max-w-[660px] mx-auto leading-[1.6]">
-                <strong>potly.</strong> strips clutter from blogs, Reels, and
-                handwritten family cards into strict 150ml katori and gram
-                measurements, schedules parallel cooking timelines, and guides
-                you hands-free by voice.
-              </p>
-
-              {/* Two Actions: Primary #3f6212 + Secondary #f1f3e6 */}
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
-                <button
-                  type="button"
-                  onClick={() => jumpToStudioTab("hub")}
-                  className="btn-press px-7 py-3.5 rounded-full bg-[#3f6212] hover:bg-[#33500e] text-[#fcfcfd] text-sm font-medium inline-flex items-center gap-2"
-                >
-                  <span>Cook in Live Studio</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onOpenOcrModal}
-                  className="btn-press px-7 py-3.5 rounded-full bg-[#f1f3e6] hover:border-[#3f6212] text-[#000000] border border-[#d3d4c8] text-sm font-medium inline-flex items-center gap-2"
-                >
-                  <ScanText className="h-4 w-4 text-[#3f6212]" />
-                  <span>Import URL, Reel or Photo</span>
-                </button>
+            <div className="mb-8 flex flex-col gap-2 border-b border-[#d3d4c8] pb-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#3f6212]">
+                  Potly Kitchen Studio
+                </p>
+                <h2 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[#1e1612] sm:text-4xl">
+                  Your kitchen, in rhythm.
+                </h2>
               </div>
+              <p className="max-w-md text-sm leading-relaxed text-[#4d4c4c]">
+                Explore recipes, plan a week, or let Potly guide the next step.
+              </p>
             </div>
 
             {/* Large Framed Working Product Interface (Live 6-Module MiseFood Studio) */}
             <div
               id="kitchen-studio"
               ref={studioSectionRef}
-              className="mt-14 rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] p-4 sm:p-7 scroll-mt-24"
+              className="rounded-[8px] bg-[#f1f3e6] border border-[#d3d4c8] p-4 sm:p-7 scroll-mt-24"
             >
               {/* Studio Module Switcher Bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-6 border-b border-[#d3d4c8]">
