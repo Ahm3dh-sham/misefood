@@ -764,7 +764,7 @@ export function EloqwntLandingShell({
                   </div>
 
                   {/* Separate Author & Role Column with Illustrated Avatar */}
-                  <div className="lg:col-span-4 flex items-center gap-4 lg:justify-end">
+                  <div className="lg:col-span-4 flex items-center gap-4 lg:justify-start lg:pl-8">
                     <div
                       aria-hidden="true"
                       style={{ backgroundColor: item.accentBg }}
