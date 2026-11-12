@@ -81,6 +81,8 @@ export function KineticPrepTimeline({
         if (!cancelled) {
           setMerged(res);
         }
+      } catch {
+        // ignore abort/offline errors
       } finally {
         if (!cancelled) {
           setIsMerging(false);

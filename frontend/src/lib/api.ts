@@ -22,6 +22,21 @@ import type {
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
+function shouldTryExternalApi(): boolean {
+  if (process.env.NEXT_PUBLIC_API_URL) return true;
+  if (typeof window === "undefined") return false;
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  );
+}
+
+function ensureExternalApi(): void {
+  if (!shouldTryExternalApi()) {
+    throw new Error("Using built-in client mode");
+  }
+}
+
 export const FALLBACK_RECIPES: Recipe[] = [
   {
     id: "11111111-1111-4111-8111-111111111101",
@@ -444,30 +459,61 @@ export const FALLBACK_RECIPES: Recipe[] = [
 ];
 
 export async function fetchRecipes(query?: string): Promise<Recipe[]> {
-  try {
-    const url = query
-      ? `${API_BASE}/recipes?q=${encodeURIComponent(query)}`
-      : `${API_BASE}/recipes`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as Recipe[];
-  } catch {
-    return FALLBACK_RECIPES;
+  if (shouldTryExternalApi()) {
+    try {
+      const url = query
+        ? `${API_BASE}/recipes?q=${encodeURIComponent(query)}`
+        : `${API_BASE}/recipes`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return (await res.json()) as Recipe[];
+    } catch {
+      // fall through to local catalogue search
+    }
   }
+  const q = query?.trim().toLowerCase();
+  if (!q) return FALLBACK_RECIPES;
+  const matched = FALLBACK_RECIPES.filter(
+    (r) =>
+      r.title.toLowerCase().includes(q) ||
+      r.cuisine.toLowerCase().includes(q) ||
+      r.description.toLowerCase().includes(q) ||
+      r.tags.some((t) => t.toLowerCase().includes(q)) ||
+      r.ingredients.some((i) => i.name.toLowerCase().includes(q))
+  );
+  return matched.length > 0 ? matched : FALLBACK_RECIPES;
 }
 
 export async function parseRecipeWithAI(
   payload: RecipeParseRequest
 ): Promise<Recipe> {
-  const res = await fetch(`${API_BASE}/recipes/parse`, {
+  if (shouldTryExternalApi()) {
+    try {
+      const res = await fetch(`${API_BASE}/recipes/parse`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        return (await res.json()) as Recipe;
+      }
+    } catch {
+      // fall back to built-in Next.js /api/recipes/parse route
+    }
+  }
+
+  const localRes = await fetch("/api/recipes/parse", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    throw new Error(`Failed to parse recipe (${res.status})`);
+  if (!localRes.ok) {
+    const errBody = (await localRes.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    throw new Error(errBody.error || `Failed to parse recipe (${localRes.status})`);
   }
-  return (await res.json()) as Recipe;
+  return (await localRes.json()) as Recipe;
 }
 
 export async function remixRecipeWithAI(
@@ -476,19 +522,107 @@ export async function remixRecipeWithAI(
   customInstruction?: string,
   targetServings?: number
 ): Promise<Recipe> {
-  const res = await fetch(`${API_BASE}/recipes/${recipeId}/remix`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      remix_mode: remixMode,
-      custom_instruction: customInstruction ?? null,
-      target_servings: targetServings ?? null,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to remix recipe (${res.status})`);
+  if (shouldTryExternalApi()) {
+    try {
+      const res = await fetch(`${API_BASE}/recipes/${recipeId}/remix`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          remix_mode: remixMode,
+          custom_instruction: customInstruction ?? null,
+          target_servings: targetServings ?? null,
+        }),
+      });
+      if (res.ok) {
+        return (await res.json()) as Recipe;
+      }
+    } catch {
+      // fall back to built-in client adaptation
+    }
   }
-  return (await res.json()) as Recipe;
+
+  const base =
+    FALLBACK_RECIPES.find((r) => r.id === recipeId) ?? FALLBACK_RECIPES[0]!;
+  const servings = targetServings ?? base.servings;
+  const suffixMap: Record<RemixMode, string> = {
+    high_protein: "(+40% High-Protein)",
+    jain_no_onion_garlic: "(Jain • No Onion-Garlic)",
+    vegan: "(Plant-Based / Vegan)",
+    air_fryer: "(Air-Fryer • -65% Oil)",
+    low_calorie: "(Light & Low-Calorie)",
+  };
+
+  let nextIngredients = [...base.ingredients];
+  if (remixMode === "jain_no_onion_garlic") {
+    nextIngredients = nextIngredients.map((ing) =>
+      /(onion|garlic|lasoon)/i.test(ing.name)
+        ? {
+            ...ing,
+            name: "asafoetida (hing) & fresh grated ginger",
+            quantity: 1,
+            unit: "tsp",
+            preparation_note: "Jain-friendly aromatic base",
+          }
+        : ing
+    );
+  } else if (remixMode === "vegan") {
+    nextIngredients = nextIngredients.map((ing) => {
+      if (/paneer/i.test(ing.name)) {
+        return {
+          ...ing,
+          name: "extra-firm organic tofu",
+          preparation_note: "pressed & cubed • dairy-free swap",
+        };
+      }
+      if (/cream|malai|curd|dahi|ghee|butter/i.test(ing.name)) {
+        return {
+          ...ing,
+          name: "soaked cashew malai cream",
+          preparation_note: "blended silky • 100% plant-based",
+        };
+      }
+      return ing;
+    });
+  } else if (remixMode === "high_protein") {
+    nextIngredients = nextIngredients.map((ing) =>
+      /(paneer|dal|curd|chicken|tofu)/i.test(ing.name)
+        ? {
+            ...ing,
+            quantity: Number((ing.quantity * 1.4).toFixed(2)),
+            nutrition_meta: {
+              ...ing.nutrition_meta,
+              protein_g: Math.round(ing.nutrition_meta.protein_g * 1.4),
+              calories_kcal: Math.round(ing.nutrition_meta.calories_kcal * 1.3),
+            },
+          }
+        : ing
+    );
+  } else if (remixMode === "air_fryer") {
+    nextIngredients = nextIngredients.map((ing) =>
+      /(oil|ghee|butter|cream)/i.test(ing.name)
+        ? {
+            ...ing,
+            quantity: 1,
+            unit: "tsp",
+            preparation_note: "light brush for 200°C air-fryer (-65% oil)",
+          }
+        : ing
+    );
+  }
+
+  return {
+    ...base,
+    id: `remix-${Date.now()}`,
+    title: `${base.title} ${suffixMap[remixMode]}`,
+    servings,
+    source_type: "ai_remix",
+    parent_recipe_id: base.id,
+    remix_mode: remixMode,
+    remix_note: customInstruction ?? suffixMap[remixMode],
+    ingredients: nextIngredients,
+    tags: [...base.tags, remixMode],
+    created_at: new Date().toISOString(),
+  };
 }
 
 export async function forkRecipeOnServer(
@@ -497,6 +631,7 @@ export async function forkRecipeOnServer(
   scaledIngredients: NormalizedIngredient[],
   servings: number
 ): Promise<Recipe> {
+  ensureExternalApi();
   const payload = {
     title: `${parentRecipe.title} (Remix)`,
     description: parentRecipe.description,
@@ -531,6 +666,7 @@ export async function requestIngredientSubstitution(
   recipeTitle: string,
   dietaryReason?: string
 ): Promise<IngredientSubstitutionResponse> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/recipes/substitute`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -550,23 +686,84 @@ export async function mergeMultiRecipeTimeline(
   recipeIds: string[],
   availableBurners = 3
 ): Promise<MultiRecipeTimelineResponse> {
-  const res = await fetch(`${API_BASE}/timelines/merge`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      recipe_ids: recipeIds,
-      available_burners: availableBurners,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Timeline merge failed (${res.status})`);
+  if (shouldTryExternalApi()) {
+    try {
+      const res = await fetch(`${API_BASE}/timelines/merge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipe_ids: recipeIds,
+          available_burners: availableBurners,
+        }),
+      });
+      if (res.ok) {
+        return (await res.json()) as MultiRecipeTimelineResponse;
+      }
+    } catch {
+      // fall back to built-in parallel timeline interleaver
+    }
   }
-  return (await res.json()) as MultiRecipeTimelineResponse;
+
+  const chosen = recipeIds
+    .map((id) => FALLBACK_RECIPES.find((r) => r.id === id))
+    .filter((r): r is Recipe => Boolean(r));
+  const pool = chosen.length >= 2 ? chosen : FALLBACK_RECIPES.slice(0, 2);
+  const colors = ["#3f6212", "#C44D28", "#DF9B35", "#1E1612"];
+
+  const seqSec = pool.reduce(
+    (sum, r) =>
+      sum + r.timeline_steps.reduce((s, st) => s + st.duration_seconds, 0),
+    0
+  );
+  const totalSec = Math.max(
+    900,
+    Math.round(seqSec / Math.max(1.3, Math.min(2.1, availableBurners * 0.65)))
+  );
+
+  const interleaved = pool
+    .flatMap((r, rIdx) =>
+      r.timeline_steps.map((st, sIdx) => ({
+        global_step_number: rIdx * 10 + sIdx + 1,
+        recipe_id: r.id,
+        recipe_title: r.title,
+        recipe_color_hex: colors[rIdx % colors.length] ?? "#3f6212",
+        title: st.title,
+        instruction: st.instruction,
+        track: st.track,
+        duration_seconds: st.duration_seconds,
+        start_offset_seconds: Math.min(
+          totalSec - st.duration_seconds,
+          Math.round(st.start_offset_seconds * 0.75 + rIdx * 180)
+        ),
+        overlap_reason:
+          st.track === "active_cook" && rIdx > 0
+            ? "Overlapped inside passive pressure-cook / marination wait window"
+            : null,
+        equipment: st.equipment,
+        timer_label: st.timer_label,
+        sensory_cue: st.sensory_cue,
+      }))
+    )
+    .sort((a, b) => a.start_offset_seconds - b.start_offset_seconds)
+    .map((node, i) => ({ ...node, global_step_number: i + 1 }));
+
+  return {
+    id: `tl-${Date.now()}`,
+    title: `${pool.map((r) => r.title.split(" ")[0]).join(" + ")} Synchronized Prep`,
+    recipe_ids: pool.map((r) => r.id),
+    recipe_titles: pool.map((r) => r.title),
+    sequential_duration_seconds: seqSec,
+    total_duration_seconds: totalSec,
+    time_saved_seconds: Math.max(0, seqSec - totalSec),
+    interleaved_steps: interleaved,
+    created_at: new Date().toISOString(),
+  };
 }
 
 export async function querySousChefVoice(
   payload: SousChefVoiceQueryRequest
 ): Promise<SousChefVoiceQueryResponse> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/sous-chef/voice-query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -581,6 +778,7 @@ export async function querySousChefVoice(
 export async function generateSmartMealPlan(
   payload: MealPlanGenerateRequest
 ): Promise<MealPlanResponse> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/meal-plans/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -593,6 +791,7 @@ export async function generateSmartMealPlan(
 }
 
 export async function fetchPantryItems(): Promise<PantryItem[]> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/pantry`, { cache: "no-store" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return (await res.json()) as PantryItem[];
@@ -606,6 +805,7 @@ export async function addPantryItemApi(payload: {
   aisle_category: AisleCategory;
   days_until_expiry: number;
 }): Promise<PantryItem> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/pantry`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -618,6 +818,7 @@ export async function addPantryItemApi(payload: {
 export async function scanBarcodeIntoPantry(
   barcodeEan: string
 ): Promise<PantryItem> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/pantry/barcode-lookup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -630,6 +831,7 @@ export async function scanBarcodeIntoPantry(
 export async function markRecipeCookedApi(
   recipeId: string
 ): Promise<MarkCookedResponse> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/pantry/mark-cooked/${recipeId}`, {
     method: "POST",
   });
@@ -638,6 +840,7 @@ export async function markRecipeCookedApi(
 }
 
 export async function fetchPantryRescueMatches(): Promise<PantryRescueMatch[]> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/pantry/rescue`, {
     method: "POST",
   });
@@ -646,6 +849,7 @@ export async function fetchPantryRescueMatches(): Promise<PantryRescueMatch[]> {
 }
 
 export async function fetchCommunities(): Promise<Community[]> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/social/communities`, {
     cache: "no-store",
   });
@@ -654,6 +858,7 @@ export async function fetchCommunities(): Promise<Community[]> {
 }
 
 export async function fetchCookbooks(): Promise<Cookbook[]> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/social/cookbooks`, {
     cache: "no-store",
   });
@@ -671,6 +876,7 @@ export async function postMadeItReview(
     tweak_note?: string;
   }
 ): Promise<MadeItReview> {
+  ensureExternalApi();
   const res = await fetch(`${API_BASE}/recipes/${recipeId}/reviews`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
