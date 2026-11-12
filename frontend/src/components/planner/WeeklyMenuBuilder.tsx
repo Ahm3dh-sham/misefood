@@ -370,7 +370,7 @@ export function WeeklyMenuBuilder() {
   const handleCopy = async () => {
     if (!plan) return;
     const text = [
-      `MiseFood 7-Day Menu${chefName ? ` for ${chefName}` : ""} (${people} ${people === 1 ? "person" : "people"})`,
+      `potly. 7-Day Menu${chefName ? ` for ${chefName}` : ""} (${people} ${people === 1 ? "person" : "people"})`,
       ...plan.map(
         (p) =>
           `${p.day} — ${regionLabel(p.region)} (${p.kcal} kcal, ${p.protein}g protein)\n` +
@@ -412,7 +412,7 @@ export function WeeklyMenuBuilder() {
             </h2>
             <p className="text-[16px] text-[#333333] leading-[1.6]">
               Pick the regions you love, set your daily nutrition target and
-              weekly grocery budget, and MiseFood builds breakfast, lunch and
+              weekly grocery budget, and potly builds breakfast, lunch and
               dinner for all seven days — portioned to your calories.
             </p>
           </div>

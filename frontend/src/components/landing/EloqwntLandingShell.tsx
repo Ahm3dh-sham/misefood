@@ -52,9 +52,9 @@ const FAQ_ITEMS: {
 }[] = [
   {
     number: "01",
-    question: "How does MiseFood help me cook faster on weeknights?",
+    question: "How does Potly help me cook faster on weeknights?",
     answer:
-      "Most recipe apps only store bookmarks. MiseFood strips clutter from blogs, Reels, and handwritten cards into structured ingredients, weaves 2 to 4 dishes into a single parallel timeline so nothing gets cold, and guides you hands-free by voice while you cook.",
+      "Most recipe apps only store bookmarks. Potly strips clutter from blogs, Reels, and handwritten cards into structured ingredients, weaves 2 to 4 dishes into a single parallel timeline so nothing gets cold, and guides you hands-free by voice while you cook.",
   },
   {
     number: "02",
@@ -66,7 +66,7 @@ const FAQ_ITEMS: {
     number: "03",
     question: "How does Cook Together coordinate multiple dishes at once?",
     answer:
-      "When you select 2 to 4 dishes—such as Dal Tadka, Air-Fryer Paneer Tikka, and Jeera Rice—MiseFood identifies passive wait windows like pressure-cooking or marinating and slots your chopping and tempering inside them, cutting active kitchen time by up to 38%.",
+      "When you select 2 to 4 dishes—such as Dal Tadka, Air-Fryer Paneer Tikka, and Jeera Rice—Potly identifies passive wait windows like pressure-cooking or marinating and slots your chopping and tempering inside them, cutting active kitchen time by up to 38%.",
   },
   {
     number: "04",
@@ -91,7 +91,7 @@ const FAQ_ITEMS: {
 const TESTIMONIALS = [
   {
     quote:
-      "“Cooking a full North Indian thali on a Tuesday night used to take 75 minutes and three cold pans. MiseFood overlapped the pressure-cooker window with my air-fryer paneer—every bowl hit the table piping hot in 42 minutes.”",
+      "“Cooking a full North Indian thali on a Tuesday night used to take 75 minutes and three cold pans. Potly overlapped the pressure-cooker window with my air-fryer paneer—every bowl hit the table piping hot in 42 minutes.”",
     author: "Ananya Krishnan",
     role: "Product Lead & Home Chef, Bengaluru",
     initials: "AK",
@@ -131,7 +131,7 @@ const DOWNLOAD_PLATFORMS = [
     title: "macOS & Windows Web Studio",
     badge: "1440px Multi-Track",
     description:
-      "Full side-by-side Recipe Studio, 4-dish Gantt timeline scheduler, 7-day composite Thali calendar, and instant ⌘K keyboard navigation.",
+      "Full side-by-side Recipe Studio, 4-dish Gantt timeline scheduler, 7-day regional meal planner, and instant ⌘K keyboard navigation.",
     actionLabel: "Open Desktop Studio",
     targetTab: "hub" as ActiveTab,
     icon: <Laptop className="h-5 w-5 text-[#3f6212]" />,
@@ -141,9 +141,9 @@ const DOWNLOAD_PLATFORMS = [
     title: "Docker & FastAPI Self-Hosted",
     badge: "Open Source Stack",
     description:
-      "Run the complete Next.js 15 + FastAPI + PostgreSQL pgvector + Gemini 3.8 culinary engine locally with your own household recipe database.",
+      "Run the complete Next.js + FastAPI + PostgreSQL pgvector + Gemini 3.8 culinary engine locally with your own household recipe database.",
     actionLabel: "View GitHub Repository",
-    href: "https://github.com/Ahm3dh-sham/misefood",
+    href: "https://github.com/Ahm3dh-sham/potly",
     icon: <Terminal className="h-5 w-5 text-[#3f6212]" />,
   },
 ];
@@ -195,7 +195,7 @@ export function EloqwntLandingShell({
   const handleCopyCli = async () => {
     try {
       await navigator.clipboard.writeText(
-        "git clone https://github.com/Ahm3dh-sham/misefood.git && cd misefood && docker compose up"
+        "git clone https://github.com/Ahm3dh-sham/potly.git && cd potly && docker compose up"
       );
       setCliCopied(true);
       setTimeout(() => setCliCopied(false), 2000);
@@ -427,7 +427,7 @@ export function EloqwntLandingShell({
               </h1>
 
               <p className="mt-6 text-[16px] text-[#333333] max-w-[660px] mx-auto leading-[1.6]">
-                <strong>MiseFood</strong> strips clutter from blogs, Reels, and
+                <strong>potly.</strong> strips clutter from blogs, Reels, and
                 handwritten family cards into strict 150ml katori and gram
                 measurements, schedules parallel cooking timelines, and guides
                 you hands-free by voice.
@@ -595,7 +595,7 @@ export function EloqwntLandingShell({
           <div className="max-w-[1200px] mx-auto space-y-20 lg:space-y-28">
             <div className="max-w-[760px]">
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#3f6212] mb-3">
-                How MiseFood Works
+                How Potly Works
               </p>
               <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] leading-[1.08] text-[#000000]">
                 Three kitchen engines that bridge saving a recipe and serving it
@@ -615,7 +615,7 @@ export function EloqwntLandingShell({
                 <p className="text-[16px] text-[#333333] leading-[1.6]">
                   Paste a food blog URL, YouTube Short, or Instagram Reel—or
                   upload a photo of your grandmother&apos;s handwritten masala
-                  card. MiseFood extracts every ingredient into structured
+                  card. Potly extracts every ingredient into structured
                   150ml katoris and grams, then adapts the dish to High-Protein,
                   Jain (No Onion-Garlic), Vegan, or Air-Fryer in one click.
                 </p>
@@ -664,7 +664,7 @@ export function EloqwntLandingShell({
                 <p className="text-[16px] text-[#333333] leading-[1.6]">
                   Cooking Dal Tadka, Paneer Tikka, and Jeera Rice one after
                   another takes 68 minutes and leaves two pans cold. Select your
-                  dishes and MiseFood slots active chopping and tadka tempering
+                  dishes and Potly slots active chopping and tadka tempering
                   inside passive pressure-cooker and marination windows—cutting
                   total kitchen time to 42 minutes.
                 </p>
@@ -700,7 +700,7 @@ export function EloqwntLandingShell({
                 <p className="text-[16px] text-[#333333] leading-[1.6]">
                   Plan a full 7-day menu around composite Indian thalis
                   (Rice/Roti + Dal + Sabji + Curd) or quick single-bowl meals.
-                  MiseFood automatically combines duplicate ingredients across
+                  Potly automatically combines duplicate ingredients across
                   the week, subtracts your fridge inventory, and links every
                   item to Swiggy Instamart, Blinkit, Zepto, and BigBasket.
                 </p>
@@ -800,7 +800,7 @@ export function EloqwntLandingShell({
                 Every Kitchen Surface
               </p>
               <h2 className="text-4xl sm:text-5xl font-medium tracking-[-0.03em] leading-[1.08] text-[#000000]">
-                Run MiseFood on your counter tablet, desktop, or home server.
+                Run Potly on your counter tablet, desktop, or home server.
               </h2>
             </div>
 
@@ -859,8 +859,8 @@ export function EloqwntLandingShell({
               <div className="flex items-center gap-3">
                 <Terminal className="h-4 w-4 text-[#3f6212] shrink-0" />
                 <code className="font-mono text-xs sm:text-sm text-[#000000] select-all">
-                  git clone https://github.com/Ahm3dh-sham/misefood.git &amp;&amp;
-                  cd misefood &amp;&amp; docker compose up
+                  git clone https://github.com/Ahm3dh-sham/potly.git &amp;&amp;
+                  cd potly &amp;&amp; docker compose up
                 </code>
               </div>
 
@@ -1089,7 +1089,7 @@ export function EloqwntLandingShell({
                 </li>
                 <li>
                   <a
-                    href="https://github.com/Ahm3dh-sham/misefood"
+                    href="https://github.com/Ahm3dh-sham/potly"
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-[#000000] transition-colors"
@@ -1125,7 +1125,7 @@ export function EloqwntLandingShell({
             <div className="flex items-center gap-4 sm:gap-6">
               <MiseFoodGlyph variant="steam-negative" size={76} />
               <span className="text-[64px] sm:text-[112px] lg:text-[148px] font-bold tracking-[-0.04em] leading-none text-[#000000] select-none">
-                misefood.
+                potly.
               </span>
             </div>
 
@@ -1143,7 +1143,7 @@ export function EloqwntLandingShell({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#4d4c4c]">
             <div className="space-y-1">
               <p className="font-medium text-[#000000]">
-                © 2026 MiseFood. Built for everyday Indian &amp; global home
+                © 2026 potly. Built for everyday Indian &amp; global home
                 kitchens.
               </p>
               <p>
@@ -1153,7 +1153,7 @@ export function EloqwntLandingShell({
 
             <div className="flex flex-wrap items-center gap-4 font-medium text-[#333333]">
               <a
-                href="https://github.com/Ahm3dh-sham/misefood"
+                href="https://github.com/Ahm3dh-sham/potly"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-[#000000] underline underline-offset-4"

@@ -584,7 +584,7 @@ async function fetchMetadataFromUrl(sourceUrl: string): Promise<{
     const pageRes = await fetch(sourceUrl, {
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (compatible; MiseFoodBot/1.0; +https://misefood.app)",
+          "Mozilla/5.0 (compatible; PotlyBot/1.0; +https://potly.app)",
       },
       signal: AbortSignal.timeout(4500),
     });

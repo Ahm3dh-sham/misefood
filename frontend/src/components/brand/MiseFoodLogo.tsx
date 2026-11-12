@@ -20,7 +20,7 @@ interface MiseFoodLogoProps {
 }
 
 /**
- * MiseFood Official Brand Identity — Concept 1: Steam Toque & Harvest Bowl
+ * Potly Official Brand Identity — Concept 1: Steam Toque & Harvest Bowl
  * - Pure White Canvas: #FFFFFF
  * - Warm Espresso Ceramic Bowl: #1E1612
  * - Roasted Terracotta (Left/Top Toque & Tomato Wedge): #C44D28
@@ -49,7 +49,7 @@ export function MiseFoodLogo({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-steam-toque.jpg"
-            alt="MiseFood Steam Toque & Harvest Bowl Logo"
+            alt="Potly Steam Toque & Harvest Bowl Logo"
             className="w-full h-full object-contain scale-125"
           />
         </span>
@@ -61,7 +61,7 @@ export function MiseFoodLogo({
           className={`font-switzer font-semibold tracking-[-0.04em] leading-none flex items-baseline gap-1 ${textColor}`}
           style={{ fontSize: Math.round(size * 0.56) }}
         >
-          <span>misefood</span>
+          <span>potly</span>
           <span
             className="inline-block rounded-full bg-[#C44D28]"
             style={{
@@ -93,7 +93,7 @@ export function MiseFoodGlyph({
           viewBox="0 0 64 64"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          aria-label="MiseFood Steam Toque and Harvest Bowl Logo"
+          aria-label="Potly Steam Toque and Harvest Bowl Logo"
         >
           {/* Pure White Squircle Background */}
           <rect

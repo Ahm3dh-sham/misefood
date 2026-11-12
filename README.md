@@ -1,6 +1,6 @@
-# MiseFood — AI Sous Chef, Social Recipe Hub & Smart Meal Planner
+# potly. — AI Sous Chef, Regional Meal Planner & Recipe Studio
 
-MiseFood is a full-stack culinary intelligence platform combining:
+**potly.** is a full-stack culinary platform combining:
 - **Social Recipe Hub**: Discover, fork/remix, scale, and semantically substitute ingredients in recipes.
 - **AI Sous Chef & OCR Studio**: Extract recipes from photos/handwritten cards (Tesseract.js + `gemini-3.8-flash`), normalize every ingredient, and compile parallel cooking timelines (Prep + Active + Passive DAG tracks).
 - **Hands-Free Cooking Mode**: Voice-controlled step navigation, live Q&A, and hardware-accelerated multi-track timers powered by the Web Speech API (`SpeechRecognition` & `SpeechSynthesis`).

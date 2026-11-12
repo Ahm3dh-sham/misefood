@@ -191,7 +191,7 @@ export function OcrImporterModal({
                   },
                   {
                     label: "15-Min Tadka Dal Khichdi",
-                    url: "https://misefood.app/blog/moong-dal-khichdi",
+                    url: "https://potly.app/blog/moong-dal-khichdi",
                   },
                 ].map((preset) => (
                   <button

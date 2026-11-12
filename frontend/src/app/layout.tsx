@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MiseFood — Katori-Native Recipe Studio, Parallel Meal Prep & Voice Chef",
+  title: "potly. — Katori-Native Recipe Studio, Parallel Meal Prep & Voice Chef",
   description:
-    "Import recipes from links, Reels, or handwritten cards into 150ml Indian katori and gram measurements, coordinate multi-dish parallel cooking timelines, and plan weekly thalis.",
+    "Import recipes from links, Reels, or handwritten cards into 150ml Indian katori and gram measurements, coordinate multi-dish parallel cooking timelines, and plan 7-day regional menus.",
 };
 
 export default function RootLayout({
