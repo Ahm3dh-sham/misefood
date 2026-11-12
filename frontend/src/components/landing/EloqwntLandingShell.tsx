@@ -306,19 +306,19 @@ export function EloqwntLandingShell({
           >
             <button
               type="button"
-              onClick={jumpToMenuBuilder}
-              className="hover:text-[#000000] transition-colors font-semibold text-[#3f6212]"
-            >
-              7-Day Menu
-            </button>
-            <button
-              type="button"
               onClick={() => jumpToStudioTab("hub")}
               className={`hover:text-[#000000] transition-colors ${
                 activeTab === "hub" ? "text-[#000000] font-semibold" : ""
               }`}
             >
               Recipes &amp; Remix
+            </button>
+            <button
+              type="button"
+              onClick={jumpToMenuBuilder}
+              className="hover:text-[#000000] transition-colors font-semibold text-[#3f6212]"
+            >
+              7-Day Menu
             </button>
             <button
               type="button"
@@ -946,6 +946,15 @@ export function EloqwntLandingShell({
                 <li>
                   <button
                     type="button"
+                    onClick={() => jumpToStudioTab("hub")}
+                    className="hover:text-[#000000] transition-colors"
+                  >
+                    Recipes &amp; AI Remix
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
                     onClick={jumpToMenuBuilder}
                     className="hover:text-[#000000] transition-colors"
                   >
@@ -953,7 +962,6 @@ export function EloqwntLandingShell({
                   </button>
                 </li>
                 {[
-                  { label: "Recipes & AI Remix", tab: "hub" as ActiveTab },
                   {
                     label: "Cook Together Timeline",
                     tab: "kinetic-prep" as ActiveTab,
